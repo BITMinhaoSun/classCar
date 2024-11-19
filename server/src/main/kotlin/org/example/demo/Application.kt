@@ -51,6 +51,7 @@ fun Application.module() {
         SchemaUtils.create(ChapterTable)
         SchemaUtils.create(KeypointTable)
         SchemaUtils.create(QuestionTable)
+        SchemaUtils.drop(DiscussTable)
         SchemaUtils.create(DiscussTable)
 //        (1..20).forEach {
 //            DiscussEntity.new {

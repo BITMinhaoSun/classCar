@@ -16,8 +16,8 @@ data class Discuss(
 )
 
 object DiscussTable : IntIdTable() {
-    val name = varchar("name", 64).uniqueIndex()
-    val content = varchar("content", 128)
+    val name = varchar("name", 64)
+    val content = varchar("content", 128).index()
 }
 
 class DiscussEntity(id: EntityID<Int>) : IntEntity(id) {
