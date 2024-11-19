@@ -56,6 +56,9 @@ fun App() {
             composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
             composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage") { CreateLessonPage(navController,name,role) }
+            composable("createDiscussPage") {
+                CreateDiscussPage(navController,name) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
         }
     }
 }

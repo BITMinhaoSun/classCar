@@ -20,16 +20,13 @@ import demo.composeapp.generated.resources.Res
 import demo.composeapp.generated.resources.back
 import io.ktor.client.call.body
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.demo.util.CourseRequest
-import org.example.demo.util.LessonsRequest
-import org.example.demo.util.LessonsResponse
-import org.example.demo.util.client
+import org.example.demo.util.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
@@ -57,26 +54,54 @@ fun CourseDetailPage(
             bottomBar = {
             },
             floatingActionButton = {
-                if (role == "teacher") {
-                    Button(onClick = {
-                        navController.navigate("createLessonPage")
-                    }) {
-                        Text("+ 创建课堂")
+                Column {
+                    if (role == "teacher") {
+                        Button(onClick = {
+                            navController.navigate("createLessonPage")
+                        }) {
+                            Text("+ 创建课堂")
+                        }
                     }
-                } else {
-                    // 这里可以根据需要返回一个空视图或者其他适合的默认情况表示不显示按钮
-                    null
+                    Button(onClick = {
+                        navController.navigate("createDiscussPage")
+                        // 这里添加点击按钮后执行分享页面相关逻辑，示例代码中暂未具体实现分享的具体操作
+                        println("执行分享课程页面操作")
+                    }) {
+                        Text("开始讨论")
+                    }
                 }
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
         ) {
-
+            val discusses = remember { mutableStateListOf<DiscussResponse>() }
             val listState = rememberLazyListState()
             val lessons = remember { mutableStateListOf<LessonsResponse>() }
             var initialized:Boolean by remember { mutableStateOf(false) }
             var refreshing by remember { mutableStateOf(false) }
             var loading by remember { mutableStateOf(false) }
             val scope = rememberCoroutineScope()
+            fun search() = scope.launch {
+
+                val result: List<DiscussResponse> = client.post("/discuss/search") {
+                    contentType(ContentType.Application.Json)
+                    setBody(DiscussRequest(10))
+
+                }.body()
+                if (result!= null && result.isNotEmpty()) {
+                    for (discuss in result) {
+                        println("讨论名称: ${discuss.name}")
+                        println("讨论内容: ${discuss.content}")
+                        println("------------------------")
+                    }
+                } else {
+                    println("未查询到任何讨论内容")
+                }
+                discusses.clear()
+                delay(100L)
+                result.forEach {
+                    discusses.add(it)
+                }
+            }
 
             fun refresh() = scope.launch {
                 if (refreshing) {
@@ -125,7 +150,9 @@ fun CourseDetailPage(
                 modifier = Modifier.fillMaxSize().padding(it),
                 contentAlignment = Alignment.Center
             ) {
+
                 var selected by remember { mutableStateOf(0) }
+
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         Text(courseName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(5.dp))
@@ -186,13 +213,19 @@ fun CourseDetailPage(
 //                            }
                         }
                         1 -> {
-                            item {
-                                Text(
-                                    "[讨论区]",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.padding(5.dp)
+
+                            items(discusses) {discuss ->
+                                DiscussCard(
+                                    discuss.name,
+                                    discuss.content,
+                                    modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
+                                      print("")
+                                    }
                                 )
                             }
+
+
+
                         }
                     }
                 }
@@ -204,6 +237,7 @@ fun CourseDetailPage(
                 )
             }
             LaunchedEffect(Unit) { refresh() }
+            LaunchedEffect(Unit) { search() }
         }
     }
 }
@@ -223,6 +257,22 @@ fun LessonCard(
             Text(lessonName, style = MaterialTheme.typography.titleMedium)
             Text("ID: $id", style = MaterialTheme.typography.bodySmall)
             Text(teacherName, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+@Composable
+fun DiscussCard(
+    content: String,
+    name:  String,
+    modifier: Modifier = Modifier
+) {
+    Card(modifier = modifier) {
+        Column(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Text( name, style = MaterialTheme.typography.titleMedium)
+            Text(content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

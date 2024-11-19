@@ -74,4 +74,17 @@ data class QuestionResponse(
 data class QuestionRequest(
     val name: String,
 )
-
+@Serializable
+data class DiscussResponse(
+    val name: String,
+    val content: String
+)
+@Serializable
+data class DiscussRequest(
+    val num:Int,
+)
+@Serializable
+data class DiscussAddRequest(
+    val name: String,
+    val content: String
+)
