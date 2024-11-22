@@ -27,6 +27,9 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.example.demo.discuss.DiscussTable
+import org.example.demo.reply.ReplyEntity
+import org.example.demo.reply.ReplyRouting
+import org.example.demo.reply.ReplyTable
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main() {
@@ -53,12 +56,24 @@ fun Application.module() {
         SchemaUtils.create(QuestionTable)
         SchemaUtils.drop(DiscussTable)
         SchemaUtils.create(DiscussTable)
-//        (1..20).forEach {
-//            DiscussEntity.new {
-//                name = "评论$it"
-//                content = "评论${it}的描述"
-//            }
-//        }
+        SchemaUtils.drop(ReplyTable)
+        SchemaUtils.create(ReplyTable)
+        (1..20).forEach {
+            DiscussEntity.new {
+                course_name="$it"
+                name = "111"
+                content = "评论${it}的描述"
+            }
+        }
+        (1..20).forEach {
+            ReplyEntity.new {
+                course_name="aaa"
+                name = "111"
+                content = "评论${it}的描述"
+                reply_name = "回复$it"
+                reply_content = "回复${it}的描述"
+            }
+        }
 //        (21312..21320).forEach { index ->
 //            DiscussTable.insert {
 //                it[name] = "评论$index"
@@ -92,5 +107,6 @@ fun Application.module() {
     courseRouting()
     lessonsRouting()
     DiscussRouting()
+    ReplyRouting()
     
 }

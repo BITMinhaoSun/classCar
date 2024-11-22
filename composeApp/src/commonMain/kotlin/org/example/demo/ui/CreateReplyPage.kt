@@ -2,6 +2,7 @@ package org.example.demo.ui
 
 
 
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -18,19 +19,22 @@ import io.ktor.http.*
 import kotlinx.coroutines.launch
 import org.example.demo.util.CourseRequest
 import org.example.demo.util.DiscussAddRequest
+import org.example.demo.util.ReplyAddRequest
 import org.example.demo.util.client
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun CreateDiscussPage(
+fun CreateReplyPage(
     navController: NavController,
     name: String,
     course_name: String,
+    content: String,
+    reply_name: String,
 ) {
     val scope = rememberCoroutineScope()
-    var content by remember { mutableStateOf("") }
+    var reply_content by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -48,14 +52,22 @@ fun CreateDiscussPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/discuss/add") {
+                        client.post("/reply/add") {
                             contentType(ContentType.Application.Json)
-                            setBody(DiscussAddRequest(course_name,name,content))
+                            setBody(
+                                ReplyAddRequest(
+                                    course_name = course_name,
+                                    name = name,
+                                    reply_content = reply_content,
+                                    content = content,
+                                    reply_name= reply_name,
+                                )
+                            )
                         }
                         navController.popBackStack()
                     }
                 }) {
-                    Text("发布论坛贴")
+                    Text("回复论坛贴")
                 }
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
@@ -67,9 +79,9 @@ fun CreateDiscussPage(
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     item {
                         OutlinedTextField(
-                            content,
-                            onValueChange = { content = it },
-                            placeholder = { Text("论坛贴内容") },
+                            reply_content,
+                            onValueChange = { reply_content = it },
+                            placeholder = { Text("回复内容") },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color.Transparent,
                                 unfocusedBorderColor = Color.Transparent,

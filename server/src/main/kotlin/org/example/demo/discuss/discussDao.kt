@@ -14,19 +14,20 @@ class discussDaoImpl{
     }
 
     suspend fun adddiscuss(user: Discuss): Unit = dbQuery {
+        println("server adddiscuss course"+user.course_name)
         DiscussEntity.new {
+            course_name = user.course_name
             name = user.name
             content = user.content
         }
     }
-
-    suspend fun getdiscuss(name: String): Discuss? = dbQuery {
-        DiscussEntity.find { DiscussTable.name eq name }.firstOrNull()?.toModel()
+    //根据课程名字获取讨论
+    suspend fun getdiscuss(course_name: String) = dbQuery {
+        DiscussEntity.find { DiscussTable.course_name eq course_name}.reversed().map(DiscussEntity::toModel)
     }
 
     // 新增方法：获取所有讨论的方法
     suspend fun getAllDiscusses( num: Int) = dbQuery {
-
         DiscussEntity.all()
             .reversed()
             .take(num)

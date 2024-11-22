@@ -20,6 +20,7 @@ import org.example.demo.util.DiscussResponse
 import org.example.demo.util.client
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
@@ -38,11 +39,12 @@ fun DiscussList(
 
         val result: List<DiscussResponse> = client.post("/discuss/search") {
             contentType(ContentType.Application.Json)
-            setBody(DiscussRequest(10))
+            setBody(DiscussRequest(courseName))
 
         }.body()
         if (result!= null && result.isNotEmpty()) {
             for (discuss in result) {
+                println("讨论课程: ${discuss.course_name}")
                 println("讨论名称: ${discuss.name}")
                 println("讨论内容: ${discuss.content}")
                 println("------------------------")
@@ -60,11 +62,12 @@ fun DiscussList(
     Scaffold(
         floatingActionButton = {
             Button(onClick = {
-                navController.navigate("createDiscussPage")
-                // 这里添加点击按钮后执行分享页面相关逻辑，示例代码中暂未具体实现分享的具体操作
-                println("执行分享课程页面操作")
+                val course_name = courseName
+                println(course_name)
+                navController.navigate("createDiscussPage/${course_name}")
+                println("创建论坛贴")
             }) {
-                Text("开始讨论")
+                Text("发布帖子")
             }
         },
         modifier = Modifier.fillMaxSize()
@@ -75,8 +78,11 @@ fun DiscussList(
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(discusses) { discuss ->
                     DiscussCard(
-                        discuss.name,
-                        discuss.content,
+                        navController,
+                        name=discuss.name,
+                        courseName = courseName,
+                        content = discuss.content,
+                        replyName =name,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
                         }
@@ -90,11 +96,21 @@ fun DiscussList(
 
 @Composable
 fun DiscussCard(
+    navController: NavController,
     content: String,
+    courseName: String,
     name:  String,
+    replyName: String,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier) {
+    Card(
+        modifier = modifier.clickable {
+            // 在这里定义点击后的逻辑，此处仅示例打印日志
+            println("Hello world")
+            navController.navigate("discussDetail/${courseName}/${name}/${content}/${replyName}")
+        }
+
+    ) {
         Column(
             modifier = Modifier.padding(10.dp)
         ) {

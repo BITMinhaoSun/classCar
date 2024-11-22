@@ -22,8 +22,11 @@ fun Application.DiscussRouting() {
         route("/discuss") {
             post("/search") {
                 val req =  call.receive<SearchRequest>()
-                val courses = discussDao.getAllDiscusses(10).map {
+                val courses = discussDao.getdiscuss(
+                    req.course_name
+                ).map {
                    SearchResponse(
+                       it.course_name,
                         it.name,
                         it.content,
                     )
@@ -34,8 +37,9 @@ fun Application.DiscussRouting() {
                     val req = call.receive<AddRequest>()
                     discussDao.adddiscuss(
                         Discuss(
-                        req.name,
-                        req.content
+                        course_name = req.course_name,
+                        name = req.name,
+                        content = req.content
                     )
                     )
                 }

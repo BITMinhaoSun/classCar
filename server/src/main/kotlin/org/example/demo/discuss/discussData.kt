@@ -11,20 +11,24 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 //这个文件规定了讨论的格式
 @Serializable
 data class Discuss(
+    val course_name: String,
     val name: String,
     val content: String
 )
 
 object DiscussTable : IntIdTable() {
+    val course_name = varchar("course_name", 64).default("aaa")
     val name = varchar("name", 64)
     val content = varchar("content", 128).index()
 }
 
 class DiscussEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<DiscussEntity>(DiscussTable)
+    var course_name by DiscussTable.course_name
     var name by DiscussTable.name
     var content by DiscussTable.content
     fun toModel() = Discuss(
+        course_name,
         name,
         content
     )

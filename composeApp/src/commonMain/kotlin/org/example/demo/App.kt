@@ -56,9 +56,48 @@ fun App() {
             composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
             composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage") { CreateLessonPage(navController,name,role) }
-            composable("createDiscussPage") {
-                CreateDiscussPage(navController,name) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            composable("createDiscussPage/{course_name}") {
+                backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                CreateDiscussPage(course_name=course_name,navController=navController,name=name) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }
+            composable("discussDetail/{course_name}/{name}/{content}/{reply_name}") {
+                    backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                val reply_name = backStackEntry.arguments?.getString("reply_name")!!
+                val name = backStackEntry.arguments?.getString("name")!!
+                val content = backStackEntry.arguments?.getString("content")!!
+                DiscussDetailPage(reply_name=reply_name,course_name=course_name,name=name,navController=navController,content=content) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
+            composable("createReplyPage/{course_name}/{name}/{content}/{reply_name}") {
+                    backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                val reply_name = backStackEntry.arguments?.getString("reply_name")!!
+                val name = backStackEntry.arguments?.getString("name")!!
+                val content = backStackEntry.arguments?.getString("content")!!
+                CreateReplyPage(
+                    course_name = course_name,
+                    navController = navController,
+                    name = name,
+                    reply_name = reply_name,
+                    content = content,
+                ) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
+//            composable("createDiscussPage/{id}/{name}/{description}/{teacher}") {backStackEntry ->
+//                val id = backStackEntry.arguments?.getString("id")!!.toInt()
+//                val courseName = backStackEntry.arguments?.getString("name")!!
+//                val description = backStackEntry.arguments?.getString("description")!!
+//                val teacher = backStackEntry.arguments?.getString("teacher")!!
+//                DiscussDetailPage(
+//                    navController = navController,
+//                    id = id,
+//                    courseName = courseName,
+//                    description = description,
+//                    teacher = teacher,
+//                    name = name,
+//                    role = role
+//                )
+//            }
         }
     }
 }

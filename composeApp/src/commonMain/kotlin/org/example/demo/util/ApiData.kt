@@ -76,15 +76,41 @@ data class QuestionRequest(
 )
 @Serializable
 data class DiscussResponse(
+    val course_name: String,
     val name: String,
     val content: String
 )
 @Serializable
 data class DiscussRequest(
-    val num:Int,
+    val course_name: String,
 )
 @Serializable
 data class DiscussAddRequest(
+    val course_name: String,
     val name: String,
     val content: String
+)
+
+@Serializable
+data class ReplySearchRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+)
+
+@Serializable
+data class ReplyAddRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val reply_content: String,
+    val reply_name: String,
+)
+@Serializable
+data class ReplySearchResponse(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val reply_content: String,
+    val reply_name: String
 )
