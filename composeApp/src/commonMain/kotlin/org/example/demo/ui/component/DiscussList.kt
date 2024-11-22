@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -59,18 +57,31 @@ fun DiscussList(
         }
     }
 
-    Box(
-        Modifier.fillMaxSize()
+    Scaffold(
+        floatingActionButton = {
+            Button(onClick = {
+                navController.navigate("createDiscussPage")
+                // 这里添加点击按钮后执行分享页面相关逻辑，示例代码中暂未具体实现分享的具体操作
+                println("执行分享课程页面操作")
+            }) {
+                Text("开始讨论")
+            }
+        },
+        modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(discusses) { discuss ->
-                DiscussCard(
-                    discuss.name,
-                    discuss.content,
-                    modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
-                        print("")
-                    }
-                )
+        Box(
+            Modifier.fillMaxSize()
+        ) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(discusses) { discuss ->
+                    DiscussCard(
+                        discuss.name,
+                        discuss.content,
+                        modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
+                            print("")
+                        }
+                    )
+                }
             }
         }
     }

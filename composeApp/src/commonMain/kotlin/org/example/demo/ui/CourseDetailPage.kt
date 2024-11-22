@@ -55,26 +55,6 @@ fun CourseDetailPage(
                     Icon(painterResource(Res.drawable.back), "back")
                 }
             },
-            bottomBar = {
-            },
-            floatingActionButton = {
-                Column {
-                    if (role == "teacher") {
-                        Button(onClick = {
-                            navController.navigate("createLessonPage")
-                        }) {
-                            Text("+ 创建课堂")
-                        }
-                    }
-                    Button(onClick = {
-                        navController.navigate("createDiscussPage")
-                        // 这里添加点击按钮后执行分享页面相关逻辑，示例代码中暂未具体实现分享的具体操作
-                        println("执行分享课程页面操作")
-                    }) {
-                        Text("开始讨论")
-                    }
-                }
-            },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
         ) {
             Box(

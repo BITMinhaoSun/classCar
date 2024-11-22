@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,23 +84,35 @@ fun LessonList(
     val loadState = rememberPullRefreshState(refreshing = loading, onRefresh = ::load)
 
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+    Scaffold(
+        floatingActionButton = {
+            if (role == "teacher") {
+                Button(onClick = {
+                    navController.navigate("createLessonPage")
+                }) {
+                    Text("+ 创建课堂")
+                }
+            }
+        },
+        modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            (1..10).reversed().forEach {
-                item {
-                    Column(modifier = Modifier.padding(5.dp)) {
-                        Text("X月X日", modifier = Modifier.padding(5.dp))
-                        Card(modifier = Modifier.padding(5.dp).fillParentMaxWidth().clickable {
-                            navController.navigate("classPage")
-                        }) {
-                            Text("第${it}周", modifier = Modifier.padding(5.dp))
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                (1..10).reversed().forEach {
+                    item {
+                        Column(modifier = Modifier.padding(5.dp)) {
+                            Text("X月X日", modifier = Modifier.padding(5.dp))
+                            Card(modifier = Modifier.padding(5.dp).fillParentMaxWidth().clickable {
+                                navController.navigate("classPage")
+                            }) {
+                                Text("第${it}周", modifier = Modifier.padding(5.dp))
+                            }
                         }
                     }
                 }
-            }
 //            item {
 //                Text("refresh", color = Color.Gray,
 //                    modifier = Modifier.clickable { refresh() }
@@ -122,14 +132,16 @@ fun LessonList(
 //                Text("load more", color = Color.Gray, modifier = Modifier.clickable { load() })
 //                LaunchedEffect(Unit) { load() }
 //            }
+            }
+            PullRefreshIndicator(refreshing = refreshing, state = pullRefreshState, Modifier.align(Alignment.TopCenter))
+            PullRefreshIndicator(
+                refreshing = loading,
+                state = loadState,
+                Modifier.align(Alignment.BottomCenter).rotate(180f)
+            )
         }
-        PullRefreshIndicator(refreshing = refreshing, state = pullRefreshState, Modifier.align(Alignment.TopCenter))
-        PullRefreshIndicator(
-            refreshing = loading,
-            state = loadState,
-            Modifier.align(Alignment.BottomCenter).rotate(180f)
-        )
     }
+
     LaunchedEffect(Unit) { refresh() }
 }
 
