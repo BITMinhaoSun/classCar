@@ -24,6 +24,10 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.example.demo.ui.component.ChapterList
+import org.example.demo.ui.component.DiscussList
+import org.example.demo.ui.component.FileList
+import org.example.demo.ui.component.LessonList
 import org.example.demo.util.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -73,206 +77,97 @@ fun CourseDetailPage(
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
         ) {
-            val discusses = remember { mutableStateListOf<DiscussResponse>() }
-            val listState = rememberLazyListState()
-            val lessons = remember { mutableStateListOf<LessonsResponse>() }
-            var initialized:Boolean by remember { mutableStateOf(false) }
-            var refreshing by remember { mutableStateOf(false) }
-            var loading by remember { mutableStateOf(false) }
-            val scope = rememberCoroutineScope()
-            fun search() = scope.launch {
-
-                val result: List<DiscussResponse> = client.post("/discuss/search") {
-                    contentType(ContentType.Application.Json)
-                    setBody(DiscussRequest(10))
-
-                }.body()
-                if (result!= null && result.isNotEmpty()) {
-                    for (discuss in result) {
-                        println("讨论名称: ${discuss.name}")
-                        println("讨论内容: ${discuss.content}")
-                        println("------------------------")
-                    }
-                } else {
-                    println("未查询到任何讨论内容")
-                }
-                discusses.clear()
-                delay(100L)
-                result.forEach {
-                    discusses.add(it)
-                }
-            }
-
-            fun refresh() = scope.launch {
-                if (refreshing) {
-                    return@launch
-                }
-                refreshing = true
-                initialized = false
-
-                //把lesson路径补上
-                val result: List<LessonsResponse> = client.post("/$role/courses/0") {
-                    contentType(ContentType.Application.Json)
-                    setBody(LessonsRequest(name))
-                }.body()
-                lessons.clear()
-                delay(100L)
-                result.forEach {
-                    lessons.add(it)
-                }
-                refreshing = false
-                initialized = true
-            }
-
-            fun load() = scope.launch {
-                if(initialized) {
-                    if (loading) {
-                        return@launch
-                    }
-                    loading = true
-                    //换上lesson路径
-                    val result: List<LessonsResponse> = client.post("/$role/courses/${lessons.size}"){
-                        contentType(ContentType.Application.Json)
-                        setBody(LessonsRequest(name))
-                    }.body()
-                    result.forEach {
-                        lessons.add(it)
-                    }
-                    loading = false
-                }
-            }
-
-            val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)
-            val loadState = rememberPullRefreshState(refreshing = loading, onRefresh = ::load)
-
-
             Box(
                 modifier = Modifier.fillMaxSize().padding(it),
                 contentAlignment = Alignment.Center
             ) {
-
                 var selected by remember { mutableStateOf(0) }
 
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    item {
-                        Text(courseName, style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(5.dp))
-                        Text("课程码：$id", modifier = Modifier.padding(5.dp))
-                        Text("教师：$teacher", modifier = Modifier.padding(5.dp))
-                        Text(description, modifier = Modifier.padding(5.dp))
-                    }
-                    item {
-                        TabRow(
-                            selectedTabIndex = selected
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        courseName,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Text("课程码：$id", modifier = Modifier.padding(5.dp))
+                    Text("教师：$teacher", modifier = Modifier.padding(5.dp))
+                    Text(description, modifier = Modifier.padding(5.dp))
+                    TabRow(
+                        selectedTabIndex = selected
+                    ) {
+                        Tab(
+                            selected = selected == 0,
+                            onClick = { selected = 0 }
                         ) {
-                            Tab(
-                                selected = selected == 0,
-                                onClick = {selected = 0}
-                            ) {
-                                Text("课堂", modifier = Modifier.padding(10.dp))
-                            }
-                            Tab(
-                                selected = selected == 1,
-                                onClick = {selected = 1}
-                            ) {
-                                Text("讨论", modifier = Modifier.padding(10.dp))
-                            }
+                            Text("课堂", modifier = Modifier.padding(10.dp))
+                        }
+                        Tab(
+                            selected = selected == 1,
+                            onClick = { selected = 1 }
+                        ) {
+                            Text("讨论", modifier = Modifier.padding(10.dp))
+                        }
+                        Tab(
+                            selected = selected == 2,
+                            onClick = { selected = 2 }
+                        ) {
+                            Text("章节", modifier = Modifier.padding(10.dp))
+                        }
+                        Tab(
+                            selected = selected == 3,
+                            onClick = { selected = 3 }
+                        ) {
+                            Text("资料", modifier = Modifier.padding(10.dp))
                         }
                     }
                     when (selected) {
                         0 -> {
-                            (1..10).reversed().forEach {
-                                item {
-                                    Column(modifier = Modifier.padding(5.dp)) {
-                                        Text("X月X日", modifier = Modifier.padding(5.dp))
-                                        Card(modifier = Modifier.padding(5.dp).fillParentMaxWidth().clickable {
-                                            navController.navigate("classPage")
-                                        }) {
-                                            Text("第${it}周", modifier = Modifier.padding(5.dp))
-                                        }
-                                    }
-                                }
-                            }
-//                            item {
-//                                Text("refresh", color = Color.Gray,
-//                                    modifier = Modifier.clickable { refresh() }
-//                                )
-//                            }
-//                            items(lessons) {lesson ->
-//                                LessonCard(
-//                                    lesson.name,
-//                                    lesson.id,
-//                                    lesson.teacher,
-//                                    modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
-//                                        navController.navigate("classPage/${lesson.id}/${lesson.name}/${lesson.description}/${lesson.teacher}")
-//                                    }
-//                                )
-//                            }
-//                            item {
-//                                Text("load more", color = Color.Gray, modifier = Modifier.clickable { load() })
-//                                LaunchedEffect(Unit) { load() }
-//                            }
+                            LessonList(
+                                navController,
+                                id,
+                                courseName,
+                                description,
+                                teacher,
+                                name,
+                                role
+                            )
                         }
                         1 -> {
-
-                            items(discusses) {discuss ->
-                                DiscussCard(
-                                    discuss.name,
-                                    discuss.content,
-                                    modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
-                                      print("")
-                                    }
-                                )
-                            }
-
-
-
+                            DiscussList(
+                                navController,
+                                id,
+                                courseName,
+                                description,
+                                teacher,
+                                name,
+                                role
+                            )
+                        }
+                        2 -> {
+                            ChapterList(
+                                navController,
+                                id,
+                                courseName,
+                                description,
+                                teacher,
+                                name,
+                                role
+                            )
+                        }
+                        3 -> {
+                            FileList(
+                                navController,
+                                id,
+                                courseName,
+                                description,
+                                teacher,
+                                name,
+                                role
+                            )
                         }
                     }
                 }
-                PullRefreshIndicator(refreshing = refreshing, state = pullRefreshState, Modifier.align(Alignment.TopCenter))
-                PullRefreshIndicator(
-                    refreshing = loading,
-                    state = loadState,
-                    Modifier.align(Alignment.BottomCenter).rotate(180f)
-                )
             }
-            LaunchedEffect(Unit) { refresh() }
-            LaunchedEffect(Unit) { search() }
-        }
-    }
-}
-
-@Composable
-fun LessonCard(
-    lessonName: String,
-    id: Int,
-    teacherName: String,
-    modifier: Modifier = Modifier
-) {
-    Card(modifier = modifier) {
-        Column(
-            modifier = Modifier.padding(5.dp)
-        ) {
-            Text("X月X日", modifier = Modifier.padding(5.dp))
-            Text(lessonName, style = MaterialTheme.typography.titleMedium)
-            Text("ID: $id", style = MaterialTheme.typography.bodySmall)
-            Text(teacherName, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
-@Composable
-fun DiscussCard(
-    content: String,
-    name:  String,
-    modifier: Modifier = Modifier
-) {
-    Card(modifier = modifier) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Text( name, style = MaterialTheme.typography.titleMedium)
-            Text(content, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
