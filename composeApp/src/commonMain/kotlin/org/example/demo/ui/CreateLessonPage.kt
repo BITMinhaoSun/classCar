@@ -14,17 +14,92 @@ import demo.composeapp.generated.resources.back
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.launch
-import org.example.demo.util.CourseRequest
+import org.example.demo.util.AddLessonRequest
 import org.example.demo.util.client
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
+//
+//@Composable
+//@Preview
+//fun CreateLessonPage(
+//    navController: NavController,
+//    name: String,
+//    role: String
+//) {
+//    val scope = rememberCoroutineScope()
+//    var courseName by remember { mutableStateOf("") }
+//    var description by remember { mutableStateOf("") }
+//
+//    Box(
+//        modifier = Modifier.fillMaxSize(),
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Scaffold(
+//            topBar = {
+//                IconButton(
+//                    onClick = { navController.popBackStack() }
+//                ) {
+//                    Icon(painterResource(Res.drawable.back), "back")
+//                }
+//            },
+//            bottomBar = {
+//                Button(onClick = {
+//                    scope.launch {
+//                        //修改为课堂路径
+//                        client.post("/teacher/course/create") {
+//                            contentType(ContentType.Application.Json)
+//                            setBody(CourseRequest(courseName, description, name))
+//                        }
+//                        navController.popBackStack()
+//                    }
+//                }) {
+//                    Text("创建课堂")
+//                }
+//            },
+//            modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
+//        ) {
+//            Box(
+//                modifier = Modifier.fillMaxSize().padding(it),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                LazyColumn(modifier = Modifier.fillMaxSize()) {
+//                    item {
+//                        OutlinedTextField(
+//                            courseName,
+//                            onValueChange = { courseName = it },
+//                            placeholder = { Text("课堂名") },
+//                            colors = OutlinedTextFieldDefaults.colors(
+//                                focusedBorderColor = Color.Transparent,
+//                                unfocusedBorderColor = Color.Transparent,
+//                                disabledBorderColor = Color.Transparent,
+//                                errorBorderColor = Color.Transparent,
+//                            ),
+//                            textStyle = MaterialTheme.typography.titleLarge
+//                        )
+//                        OutlinedTextField(
+//                            description,
+//                            onValueChange = { description = it },
+//                            placeholder = { Text("课堂描述") },
+//                            colors = OutlinedTextFieldDefaults.colors(
+//                                focusedBorderColor = Color.Transparent,
+//                                unfocusedBorderColor = Color.Transparent,
+//                                disabledBorderColor = Color.Transparent,
+//                                errorBorderColor = Color.Transparent,
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 @Composable
 @Preview
 fun CreateLessonPage(
     navController: NavController,
     name: String,
-    role: String
+    role: String,
+    course_id: Int
 ) {
     val scope = rememberCoroutineScope()
     var courseName by remember { mutableStateOf("") }
@@ -46,9 +121,9 @@ fun CreateLessonPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/teacher/course/create") {
+                        client.post("/lesson/add") {
                             contentType(ContentType.Application.Json)
-                            setBody(CourseRequest(courseName, description, name))
+                            setBody(AddLessonRequest(course_id =course_id , description=description, name=courseName))
                         }
                         navController.popBackStack()
                     }

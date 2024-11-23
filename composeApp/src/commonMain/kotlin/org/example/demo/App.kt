@@ -55,7 +55,11 @@ fun App() {
             composable("questionPage") { QuestionPage(navController,name, role) }
             composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
             composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
-            composable("createlessonPage") { CreateLessonPage(navController,name,role) }
+            composable("createlessonPage/{course_id}") {
+                    backStackEntry ->
+                val course_id = backStackEntry.arguments?.getString("course_id")!!.toInt()
+              //  val course_id = backStackEntry.arguments?.getInt("course_id")!!
+                CreateLessonPage(navController,name =name,role = role,course_id=course_id,) }
             composable("createDiscussPage/{course_name}") {
                     backStackEntry ->
                 val course_name = backStackEntry.arguments?.getString("course_name")!!
@@ -110,6 +114,11 @@ fun App() {
                     content = content,
                 ) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }
+            composable("createStudentofCoursePage/{course_id}") {
+                    backStackEntry ->
+                val course_id = backStackEntry.arguments?.getString("course_id")!!.toInt()
+                //  val course_id = backStackEntry.arguments?.getInt("course_id")!!
+                CreateStudentofCoursePage(navController,course_id=course_id,) }
 //            composable("createDiscussPage/{id}/{name}/{description}/{teacher}") {backStackEntry ->
 //                val id = backStackEntry.arguments?.getString("id")!!.toInt()
 //                val courseName = backStackEntry.arguments?.getString("name")!!

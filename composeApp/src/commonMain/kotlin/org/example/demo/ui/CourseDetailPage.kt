@@ -24,10 +24,7 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.demo.ui.component.ChapterList
-import org.example.demo.ui.component.DiscussList
-import org.example.demo.ui.component.FileList
-import org.example.demo.ui.component.LessonList
+import org.example.demo.ui.component.*
 import org.example.demo.util.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -99,6 +96,12 @@ fun CourseDetailPage(
                         ) {
                             Text("资料", modifier = Modifier.padding(10.dp))
                         }
+                        Tab(
+                            selected = selected == 4,
+                            onClick = { selected = 4 }
+                        ) {
+                            Text("学生", modifier = Modifier.padding(10.dp))
+                        }
                     }
                     when (selected) {
                         0 -> {
@@ -136,6 +139,17 @@ fun CourseDetailPage(
                         }
                         3 -> {
                             FileList(
+                                navController,
+                                id,
+                                courseName,
+                                description,
+                                teacher,
+                                name,
+                                role
+                            )
+                        }
+                        4 -> {
+                            StudentList(
                                 navController,
                                 id,
                                 courseName,

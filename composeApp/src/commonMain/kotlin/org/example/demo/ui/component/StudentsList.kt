@@ -15,15 +15,16 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.example.demo.util.ChapterRequest
-import org.example.demo.util.ChapterResponse
+import org.example.demo.util.StudentofCoursesRequest
+import org.example.demo.util.StudentofCourseResponse
 import org.example.demo.util.client
 import org.jetbrains.compose.ui.tooling.preview.Preview
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
-fun ChapterList(
+fun StudentList(
     navController: NavController,
     id: Int,
     courseName: String,
@@ -32,29 +33,27 @@ fun ChapterList(
     name: String,
     role: String
 ) {
-    val chapters = remember { mutableStateListOf<ChapterResponse>() }
+    val students = remember { mutableStateListOf<StudentofCourseResponse>() }
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<ChapterResponse> = client.post("/chapter/search") {
+        val result: List<StudentofCourseResponse> = client.post("/teacher/studentofcourse") {
             contentType(ContentType.Application.Json)
-            setBody(ChapterRequest(courseName))
+            setBody(StudentofCoursesRequest(id))
 
         }.body()
         if (result!= null && result.isNotEmpty()) {
-            for (chapter in result) {
-                println("课程名称: ${chapter.course_name}")
-                println("章节名称: ${chapter.name}")
-                println("章节内容: ${chapter.content}")
+            for (stu in result) {
+                println("学生: ${stu.name}")
                 println("------------------------")
             }
         } else {
-            println("未查询到任何章节内容")
+            println("未查询到任何学生")
         }
-        chapters.clear()
+        students.clear()
         delay(100L)
         result.forEach {
-            chapters.add(it)
+            students.add(it)
         }
     }
 
@@ -62,12 +61,12 @@ fun ChapterList(
         floatingActionButton = {
             if (role == "teacher") {
                 Button(onClick = {
-                    val course_name = courseName
-                    println(course_name)
-                    navController.navigate("createchapterPage/${course_name}")
-                    println("创建章节")
+//                println("going to createLessonPage"+id)
+//                println("id的类型是: ${id::class.simpleName}")
+                navController.navigate("createStudentofCoursePage/${id}")
+//                println("创建课程")
                 }) {
-                    Text("添加章节")
+                    Text("拉取学生")
                 }
             }
         },
@@ -77,17 +76,16 @@ fun ChapterList(
             Modifier.fillMaxSize()
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(chapters) { chapter ->
-                    ChapterCard(
+                items(students) { student ->
+                    StudentCard(
                         navController,
-                        name=chapter.name,
-                        courseName = courseName,
-                        content = chapter.content,
-                        keypoint_name =name,
+                        id = id,
+                        studentName = student.name,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
-                        }
-                    )
+                        },
+
+                        )
                 }
             }
         }
@@ -95,29 +93,23 @@ fun ChapterList(
     LaunchedEffect(Unit) { search() }
 }
 
-
 @Composable
-fun ChapterCard(
+fun StudentCard(
     navController: NavController,
-    content: String,
-    courseName: String,
-    name:  String,
-    keypoint_name: String,
+    studentName: String,
+    id: Int,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.clickable {
-            // 在这里定义点击后的逻辑，此处仅示例打印日志
-            println("Hello world")
-            navController.navigate("chapterDetail/${courseName}/${name}/${content}/${keypoint_name}")
-        }
-
-    ) {
+    Card(modifier = modifier
+        .clickable {
+        // 在这里定义点击后的逻辑，此处仅示例打印日志
+        println("Hello world,Im going to some Unkown Pages ")
+        //   navController.navigate("discussDetail/${courseName}/${name}/${content}/${replyName}")
+    }) {
         Column(
             modifier = Modifier.padding(10.dp)
         ) {
-            Text( name, style = MaterialTheme.typography.titleMedium)
-            Text(content, style = MaterialTheme.typography.bodyMedium)
+            Text( studentName, style = MaterialTheme.typography.titleMedium)
         }
     }
 }
