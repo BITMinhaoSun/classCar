@@ -27,3 +27,13 @@ data class JoinCourseRequest(
     val student: String,
     val course: Int
 )
+
+@Serializable
+data class StudentofCoursesRequest(
+    val course_id: Int,
+)
+
+@Serializable
+data class StudentofCourseResponse(
+    val name:String,
+)

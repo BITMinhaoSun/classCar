@@ -22,7 +22,7 @@ data class Lesson(
 object LessonTable : IntIdTable() {
     val name = varchar("name", 64)
     val description = varchar("description", 256)
-    val course_id = reference("course_id", CourseTable, onDelete = ReferenceOption.CASCADE).index()
+    val course_id = integer("course_id")
 }
 
 class LessonEntity(id: EntityID<Int>) : IntEntity(id) {
@@ -30,14 +30,14 @@ class LessonEntity(id: EntityID<Int>) : IntEntity(id) {
     var name by LessonTable.name
     var description by LessonTable.description
     var course_id by LessonTable.course_id
-    var students by StudentEntity via StudentLessonTable
+//    var students by StudentEntity via StudentLessonTable
     fun toModel() = Lesson(
-        id.value, name, description, course_id.value
+        id.value, name, description, course_id
     )
 }
-
-object StudentLessonTable : Table() {
-    val student = reference("student", StudentTable, onDelete = ReferenceOption.CASCADE)
-    val lesson = reference("lesson", LessonTable, onDelete = ReferenceOption.CASCADE)
-    override val primaryKey = PrimaryKey(student, lesson)
-}
+//
+//object StudentLessonTable : Table() {
+//    val student = reference("student", StudentTable, onDelete = ReferenceOption.CASCADE)
+//    val lesson = reference("lesson", LessonTable, onDelete = ReferenceOption.CASCADE)
+//    override val primaryKey = PrimaryKey(student, lesson)
+//}

@@ -28,6 +28,18 @@ fun Application.courseRouting() {
                     req.teacher
                 )
             }
+            post("/studentofcourse") {
+                val req =  call.receive<StudentofCoursesRequest>()
+                val courses = courseDao.getStudentsOfCourse(
+                    req.course_id,
+                    //call.parameters["num"]!!.toInt(), 10
+                    ).map {
+                    StudentofCourseResponse(
+                        it.name,
+                    )
+                }
+                call.respond(courses)
+            }
         }
         route("/student") {
             post("/courses/{num}") {

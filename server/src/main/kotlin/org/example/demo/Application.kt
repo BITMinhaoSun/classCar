@@ -10,7 +10,6 @@ import org.example.demo.course.CourseTable
 import org.example.demo.course.StudentCourseTable
 import org.example.demo.course.courseRouting
 import org.example.demo.lesson.LessonTable
-import org.example.demo.lesson.StudentLessonTable
 import org.example.demo.lesson.lessonsRouting
 import org.example.demo.questions.QuestionTable
 import org.example.demo.questions.StudentQuestionTable
@@ -29,6 +28,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.example.demo.discuss.DiscussTable
+import org.example.demo.lesson.LessonEntity
 import org.example.demo.reply.ReplyEntity
 import org.example.demo.reply.ReplyRouting
 import org.example.demo.reply.ReplyTable
@@ -52,7 +52,7 @@ fun Application.module() {
         SchemaUtils.create(CourseTable)
         SchemaUtils.create(StudentCourseTable)
         SchemaUtils.create(LessonTable)
-        SchemaUtils.create(StudentLessonTable)
+   //     SchemaUtils.create(StudentLessonTable)
         SchemaUtils.create(QuestionTable)
 
         SchemaUtils.drop(DiscussTable)
@@ -64,13 +64,13 @@ fun Application.module() {
 //        SchemaUtils.drop(KeypointTable)
         SchemaUtils.create(KeypointTable)
         SchemaUtils.create(FileDescriptionTable)
-//        (1..20).forEach {
-//            DiscussEntity.new {
-//                course_name="$it"
-//                name = "111"
-//                content = "评论${it}的描述"
-//            }
-//        }
+        (1..20).forEach {
+            LessonEntity.new {
+                description="$it"
+                name = "111"
+                course_id = 1
+            }
+        }
 //        (1..20).forEach {
 //            ReplyEntity.new {
 //                course_name="aaa"

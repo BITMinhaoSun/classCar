@@ -174,3 +174,31 @@ data class FileDescriptionResponse(
 data class DownloadFileResponse(
     val file: ByteArray
 )
+
+@Serializable
+data class SearchLessonRequest(
+    val course_id:Int ,
+)
+
+@Serializable
+data class AddLessonRequest(
+    val course_id: Int ,
+    val name: String,
+    val description: String
+)
+@Serializable
+data class SearchLessonResponse(
+    val course_id: Int ,
+    val name: String,
+    val description: String,
+)
+
+@Serializable
+data class StudentofCoursesRequest(
+    val course_id: Int,
+)
+
+@Serializable
+data class StudentofCourseResponse(
+    val name:String,
+)

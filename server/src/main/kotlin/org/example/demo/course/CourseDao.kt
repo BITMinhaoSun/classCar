@@ -32,10 +32,13 @@ class CourseDaoImpl {
             .take(num)
             .map(CourseEntity::toModel)
     }
-    suspend fun getStudentsOfCourse(course: Int, from: Int, num: Int) = dbQuery {
+    suspend fun getStudentsOfCourse(course: Int,
+                                  //  from: Int,
+                                 //   num: Int
+    ) = dbQuery {
         CourseEntity.findById(course)!!.students
-            .drop(from)
-            .take(num)
+          //  .drop(from)
+          //  .take(num)
             .map(StudentEntity::toModel)
     }
     suspend fun joinCourse(student: String, course: Int) = dbQuery {

@@ -70,13 +70,15 @@ fun ChapterList(
     }
     Scaffold(
         floatingActionButton = {
-            Button(onClick = {
-                val course_name = courseName
-                println(course_name)
-                navController.navigate("createchapterPage/${course_name}")
-                println("创建章节")
-            }) {
-                Text("添加章节")
+            if (role == "teacher") {
+                Button(onClick = {
+                    val course_name = courseName
+                    println(course_name)
+                    navController.navigate("createchapterPage/${course_name}")
+                    println("创建章节")
+                }) {
+                    Text("添加章节")
+                }
             }
         },
         modifier = Modifier.fillMaxSize()
