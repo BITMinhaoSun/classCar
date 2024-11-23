@@ -20,6 +20,8 @@ import org.example.demo.student.studentRouting
 import org.example.demo.discuss.DiscussRouting
 import org.example.demo.teacher.*
 import org.example.demo.chapter.*
+import org.example.demo.courseFile.FileDescriptionTable
+import org.example.demo.courseFile.fileRouting
 import org.example.demo.discuss.DiscussEntity
 import org.example.demo.keypoint.*
 import org.example.demo.utils.dbQuery
@@ -61,38 +63,39 @@ fun Application.module() {
         SchemaUtils.create(ChapterTable)
 //        SchemaUtils.drop(KeypointTable)
         SchemaUtils.create(KeypointTable)
-        (1..20).forEach {
-            DiscussEntity.new {
-                course_name="$it"
-                name = "111"
-                content = "评论${it}的描述"
-            }
-        }
-        (1..20).forEach {
-            ReplyEntity.new {
-                course_name="aaa"
-                name = "111"
-                content = "评论${it}的描述"
-                reply_name = "回复$it"
-                reply_content = "回复${it}的描述"
-            }
-        }
-        (1..20).forEach {
-            ChapterEntity.new {
-                course_name="$it"
-                name = "111"
-                content = "评论${it}的描述"
-            }
-        }
-        (1..20).forEach {
-            KeypointEntity.new {
-                course_name="aaa"
-                name = "111"
-                content = "评论${it}的描述"
-                keypoint_name = "回复$it"
-                keypoint_content = "回复${it}的描述"
-            }
-        }
+        SchemaUtils.create(FileDescriptionTable)
+//        (1..20).forEach {
+//            DiscussEntity.new {
+//                course_name="$it"
+//                name = "111"
+//                content = "评论${it}的描述"
+//            }
+//        }
+//        (1..20).forEach {
+//            ReplyEntity.new {
+//                course_name="aaa"
+//                name = "111"
+//                content = "评论${it}的描述"
+//                reply_name = "回复$it"
+//                reply_content = "回复${it}的描述"
+//            }
+//        }
+//        (1..20).forEach {
+//            ChapterEntity.new {
+//                course_name="$it"
+//                name = "111"
+//                content = "评论${it}的描述"
+//            }
+//        }
+//        (1..20).forEach {
+//            KeypointEntity.new {
+//                course_name="aaa"
+//                name = "111"
+//                content = "评论${it}的描述"
+//                keypoint_name = "回复$it"
+//                keypoint_content = "回复${it}的描述"
+//            }
+//        }
 //        (21312..21320).forEach { index ->
 //            DiscussTable.insert {
 //                it[name] = "评论$index"
@@ -129,5 +132,5 @@ fun Application.module() {
     ReplyRouting()
     ChapterRouting()
     KeypointRouting()
-
+    fileRouting()
 }

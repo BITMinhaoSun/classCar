@@ -155,3 +155,22 @@ data class KeypointSearchResponse(
     val keypoint_content: String,
     val keypoint_name: String
 )
+
+@Serializable
+data class UploadFileRequest(
+    val baseName: String,
+    val extension: String,
+    val file: ByteArray
+)
+
+@Serializable
+data class FileDescriptionResponse(
+    val id: Int,
+    val baseName: String,
+    val extension: String
+)
+
+@Serializable
+data class DownloadFileResponse(
+    val file: ByteArray
+)

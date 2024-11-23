@@ -66,6 +66,11 @@ kotlin {
             implementation(libs.ktor.serialization.kotlinx.json)
             // experimental navigation
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.8.0-alpha10")
+
+            // Enables FileKit without Compose dependencies
+            implementation("io.github.vinceglb:filekit-core:0.8.7")
+            // Enables FileKit with Composable utilities
+            implementation("io.github.vinceglb:filekit-compose:0.8.7")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
