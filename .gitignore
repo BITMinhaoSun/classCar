@@ -18,3 +18,4 @@ captures
 **/xcshareddata/WorkspaceSettings.xcsettings
 my_test_db.mv.db
 res/courseFiles/*
+!res/courseFiles/readme.txt
