@@ -5,7 +5,11 @@ import org.example.demo.utils.dbQuery
 import kotlinx.coroutines.flow.flow
 import org.example.demo.course.CourseEntity
 import org.example.demo.course.CourseTable
+import org.example.demo.courseFile.FileDescriptionEntity
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.*
 
 
 class chapterDaoImpl{
@@ -26,6 +30,28 @@ class chapterDaoImpl{
         ChapterEntity.find { ChapterTable.course_name eq course_name}.reversed().map(ChapterEntity::toModel)
     }
 
+//    suspend fun deleteChapter(course_name: String, chapter_name: String) = dbQuery {
+//        ChapterTable.deleteWhere {
+//            (ChapterTable.course_name eq course_name) and (ChapterTable.name eq chapter_name)
+//        }
+//    }
+
+    suspend fun deleteChapter(course_name: String, chapter_name: String) = dbQuery {
+        // 查找符合条件的所有实体
+//        ChapterEntity.find {
+//            (ChapterTable.course_name eq course_name) and (ChapterTable.name eq chapter_name)
+//        }.forEach { ChapterEntity ->
+//            // 删除每个实体
+//            ChapterEntity.delete()
+//        }
+        println("delete chapter ")
+        println(course_name)
+        println(chapter_name)
+        ChapterEntity.find {
+            (ChapterTable.course_name eq course_name) and (ChapterTable.name eq chapter_name)
+        }.forEach { it.delete() }
+//        FileDescriptionEntity.findById(fileId)?.delete()
+    }
     // 新增方法：获取所有讨论的方法
     suspend fun getAllChapters( num: Int) = dbQuery {
         ChapterEntity.all()

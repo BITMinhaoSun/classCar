@@ -7,9 +7,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import demo.composeapp.generated.resources.Res
+import demo.composeapp.generated.resources.delete
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -17,7 +20,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.demo.util.ChapterRequest
 import org.example.demo.util.ChapterResponse
+import org.example.demo.util.DownloadFileResponse
 import org.example.demo.util.client
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -57,7 +62,12 @@ fun ChapterList(
             chapters.add(it)
         }
     }
-
+    fun deleteChapter(chapterName: String) = scope.launch {
+        println("delete chapter $chapterName")
+        client.delete("/chapter/delete/$chapterName/$courseName")
+        delay(100L)
+        search() // 删除后刷新列表
+    }
     Scaffold(
         floatingActionButton = {
             Button(onClick = {
@@ -81,7 +91,9 @@ fun ChapterList(
                         name=chapter.name,
                         courseName = courseName,
                         content = chapter.content,
+                        role = role,
                         keypoint_name =name,
+                        onDelete = { deleteChapter(chapter.name) },
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
                         }
@@ -99,6 +111,8 @@ fun ChapterCard(
     navController: NavController,
     content: String,
     courseName: String,
+    role: String,
+    onDelete: (Int) -> Unit,
     name:  String,
     keypoint_name: String,
     modifier: Modifier = Modifier
@@ -111,11 +125,23 @@ fun ChapterCard(
         }
 
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text( name, style = MaterialTheme.typography.titleMedium)
-            Text(content, style = MaterialTheme.typography.bodyMedium)
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(name, style = MaterialTheme.typography.titleMedium)
+                Text(content, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (role == "teacher") {
+                IconButton(onClick = { onDelete(name.hashCode()) }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }
