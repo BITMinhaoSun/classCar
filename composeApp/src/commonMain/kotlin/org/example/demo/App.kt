@@ -57,7 +57,7 @@ fun App() {
             composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage") { CreateLessonPage(navController,name,role) }
             composable("createDiscussPage/{course_name}") {
-                backStackEntry ->
+                    backStackEntry ->
                 val course_name = backStackEntry.arguments?.getString("course_name")!!
                 CreateDiscussPage(course_name=course_name,navController=navController,name=name) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }
@@ -80,6 +80,33 @@ fun App() {
                     navController = navController,
                     name = name,
                     reply_name = reply_name,
+                    content = content,
+                ) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
+            composable("createchapterPage/{course_name}") {
+                    backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                CreateChapterPage(course_name=course_name,navController=navController,name=name) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
+            composable("chapterDetail/{course_name}/{name}/{content}/{keypoint_name}") {
+                    backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                val keypoint_name = backStackEntry.arguments?.getString("keypoint_name")!!
+                val name = backStackEntry.arguments?.getString("name")!!
+                val content = backStackEntry.arguments?.getString("content")!!
+                ChapterDetailPage(keypoint_name=keypoint_name,course_name=course_name,name=name,navController=navController,content=content) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+            }
+            composable("createkeypointPage/{course_name}/{name}/{content}/{keypoint_name}") {
+                    backStackEntry ->
+                val course_name = backStackEntry.arguments?.getString("course_name")!!
+                val keypoint_name = backStackEntry.arguments?.getString("keypoint_name")!!
+                val name = backStackEntry.arguments?.getString("name")!!
+                val content = backStackEntry.arguments?.getString("content")!!
+                CreateKeypointPage(
+                    course_name = course_name,
+                    navController = navController,
+                    name = name,
+                    keypoint_name = keypoint_name,
                     content = content,
                 ) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }

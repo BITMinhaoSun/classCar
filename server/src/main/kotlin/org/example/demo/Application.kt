@@ -34,10 +34,10 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main() {
     embeddedServer(
-            Netty,
-            port = SERVER_PORT,
-            host = "0.0.0.0",
-            module = Application::module
+        Netty,
+        port = SERVER_PORT,
+        host = "0.0.0.0",
+        module = Application::module
     ).start(wait = true)
 }
 
@@ -51,13 +51,16 @@ fun Application.module() {
         SchemaUtils.create(StudentCourseTable)
         SchemaUtils.create(LessonTable)
         SchemaUtils.create(StudentLessonTable)
-        SchemaUtils.create(ChapterTable)
-        SchemaUtils.create(KeypointTable)
         SchemaUtils.create(QuestionTable)
+
         SchemaUtils.drop(DiscussTable)
         SchemaUtils.create(DiscussTable)
         SchemaUtils.drop(ReplyTable)
         SchemaUtils.create(ReplyTable)
+//        SchemaUtils.drop(ChapterTable)
+        SchemaUtils.create(ChapterTable)
+//        SchemaUtils.drop(KeypointTable)
+        SchemaUtils.create(KeypointTable)
         (1..20).forEach {
             DiscussEntity.new {
                 course_name="$it"
@@ -72,6 +75,22 @@ fun Application.module() {
                 content = "评论${it}的描述"
                 reply_name = "回复$it"
                 reply_content = "回复${it}的描述"
+            }
+        }
+        (1..20).forEach {
+            ChapterEntity.new {
+                course_name="$it"
+                name = "111"
+                content = "评论${it}的描述"
+            }
+        }
+        (1..20).forEach {
+            KeypointEntity.new {
+                course_name="aaa"
+                name = "111"
+                content = "评论${it}的描述"
+                keypoint_name = "回复$it"
+                keypoint_content = "回复${it}的描述"
             }
         }
 //        (21312..21320).forEach { index ->
@@ -108,5 +127,7 @@ fun Application.module() {
     lessonsRouting()
     DiscussRouting()
     ReplyRouting()
-    
+    ChapterRouting()
+    KeypointRouting()
+
 }

@@ -114,3 +114,44 @@ data class ReplySearchResponse(
     val reply_content: String,
     val reply_name: String
 )
+
+@Serializable
+data class ChapterResponse(
+    val course_name: String,
+    val name: String,
+    val content: String
+)
+@Serializable
+data class ChapterRequest(
+    val course_name: String,
+)
+@Serializable
+data class ChapterAddRequest(
+    val course_name: String,
+    val name: String,
+    val content: String
+)
+
+@Serializable
+data class KeypointSearchRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+)
+
+@Serializable
+data class KeypointAddRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String,
+)
+@Serializable
+data class KeypointSearchResponse(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String
+)

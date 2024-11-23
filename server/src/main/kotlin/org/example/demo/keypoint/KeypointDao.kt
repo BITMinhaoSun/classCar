@@ -1,27 +1,37 @@
 package org.example.demo.keypoint
 
-import org.example.demo.course.*
-import org.example.demo.chapter.*
-import org.example.demo.lesson.Lesson
-import org.example.demo.lesson.LessonEntity
-import org.example.demo.lesson.LessonTable
+import org.example.demo.discuss.Discuss
+import org.example.demo.discuss.DiscussEntity
+import org.example.demo.discuss.DiscussTable
+import org.jetbrains.exposed.sql.and
+import kotlinx.coroutines.flow.Flow
 import org.example.demo.utils.dbQuery
-import org.jetbrains.exposed.dao.id.EntityID
+//这个文件用于讨论的增删改
+import kotlinx.coroutines.flow.flow
+import org.example.demo.course.CourseEntity
+import org.example.demo.course.CourseTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
-class KeypointDao {
-    suspend fun createKeypoint(name: String, description: String, chapter_id: Int): Int = dbQuery{
-        val keypoint = KeypointEntity.new {
-            this.name = name
-            this.description = description
-            this.chapter_id = ChapterEntity.findById(chapter_id)!!.id
+
+class keypointDaoImpl{
+    suspend fun addkeypoint(user: Keypoint): Unit = dbQuery {
+        KeypointEntity.new {
+            keypoint_content = user.keypoint_content
+            course_name = user.course_name
+            name = user.name
+            keypoint_name = user.keypoint_name
+            content = user.content
         }
-        return@dbQuery keypoint.id.value
     }
-    suspend fun getChapterOfKeypoint(keypoint: String) = dbQuery {
-        ChapterEntity.find { KeypointTable.name eq keypoint }
-                .map(ChapterEntity::toModel)
+    //根据课程名字获取讨论
+    suspend fun getkeypoint(name: String,content:String,course_name:String) = dbQuery {
+        KeypointEntity.find {
+            (KeypointTable.course_name eq course_name) and
+                    (KeypointTable.content eq content) and
+                    (KeypointTable.name eq name)
+        }.reversed().map(KeypointEntity::toModel)
     }
+
 }
 
-val chapterDao = ChapterDao()
+val keypointDao = keypointDaoImpl()

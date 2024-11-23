@@ -1,55 +1,47 @@
 package org.example.demo.chapter
 
+import org.example.demo.discuss.SearchRequest
+import org.example.demo.discuss.AddRequest
+import org.example.demo.discuss.Discuss
+import org.example.demo.discuss.discussDao
+
+
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.example.demo.course.CourseRequest
+import kotlinx.coroutines.flow.Flow
 import org.example.demo.course.CourseResponse
 import org.example.demo.course.CoursesRequest
-import org.example.demo.course.JoinCourseRequest
-import org.example.demo.course.courseDao
+import org.example.demo.discuss.discussDao
 
-fun Application.courseRouting() {
+fun Application.ChapterRouting() {
     routing {
-        route("/teacher") {
-            post("/courses/{num}") {
-                val req =  call.receive<CoursesRequest>()
-                val courses = courseDao.getCoursesOfTeacher(req.name, call.parameters["num"]!!.toInt(), 10).map {
-                    CourseResponse(
-                        it.id,
+        ///chapter/search
+        route("/chapter") {
+            post("/search") {
+                val req =  call.receive<ChapterSearchRequest>()
+                val courses = chapterDao.getchapter(
+                    req.course_name
+                ).map {
+                    ChapterSearchResponse(
+                        it.course_name,
                         it.name,
-                        it.description,
-                        it.creator
+                        it.content,
                     )
                 }
                 call.respond(courses)
             }
-            post("/course/create") {
-                val req = call.receive<CourseRequest>()
-                courseDao.createCourse(
-                    req.name,
-                    req.description,
-                    req.teacher
+            post("/add") {
+                val req = call.receive<ChapterAddRequest>()
+                chapterDao.addchapter(
+                    Chapter(
+                        course_name = req.course_name,
+                        name = req.name,
+                        content = req.content
+                    )
                 )
-            }
-        }
-        route("/student") {
-            post("/courses/{num}") {
-                val req =  call.receive<CoursesRequest>()
-                val courses = courseDao.getCoursesOfStudent(req.name, call.parameters["num"]!!.toInt(), 10).map {
-                    CourseResponse(
-                        it.id,
-                        it.name,
-                        it.description,
-                        it.creator
-                    )
-                }
-                call.respond(courses)
-            }
-            post("/course/join") {
-                val req = call.receive<JoinCourseRequest>()
-                courseDao.joinCourse(req.student, req.course)
             }
         }
     }

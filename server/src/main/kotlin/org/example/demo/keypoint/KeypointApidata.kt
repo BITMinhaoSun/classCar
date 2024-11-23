@@ -1,23 +1,28 @@
 package org.example.demo.keypoint
 
+
 import kotlinx.serialization.Serializable
-
+//这个文件规定了搜索和添加回复的请求格式
 @Serializable
-data class KeypointResponse(
-    val id: Int,
+data class KeypointSearchRequest(
     val name: String,
-    val description: String,
-    val teacher: String
+    val content: String,
+    val course_name: String,
 )
 
 @Serializable
-data class KeypointRequest(
+data class KeypointAddRequest(
     val name: String,
-    val description: String,
-    val teacher: String
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String,
 )
-
 @Serializable
-data class KeypointsRequest(
+data class KeypointSearchResponse(
     val name: String,
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String
 )
