@@ -198,9 +198,9 @@ fun LessonList(
                     println("going to createLessonPage" + id)
                     println("id的类型是: ${id::class.simpleName}")
                     navController.navigate("createLessonPage/${id}")
-                    println("创建课程")
+                    println("创建课堂")
                 }) {
-                    Text("创建课程")
+                    Text("创建课堂")
                 }
             }
         },
