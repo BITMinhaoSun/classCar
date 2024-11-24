@@ -64,7 +64,7 @@ fun LessonDetailPage(
     ) {
 
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().padding(it),
             contentAlignment = Alignment.Center
         ) {
             LazyColumn(
