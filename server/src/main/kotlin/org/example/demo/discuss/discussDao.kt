@@ -3,9 +3,12 @@ import kotlinx.coroutines.flow.Flow
 import org.example.demo.utils.dbQuery
 //这个文件用于讨论的增删改
 import kotlinx.coroutines.flow.flow
+import org.example.demo.chapter.ChapterEntity
+import org.example.demo.chapter.ChapterTable
 import org.example.demo.course.CourseEntity
 import org.example.demo.course.CourseTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 
 
 class discussDaoImpl{
@@ -32,6 +35,15 @@ class discussDaoImpl{
             .reversed()
             .take(num)
             .map(DiscussEntity::toModel)
+    }
+    suspend fun deleteDiscuss(course_name: String, discuss_name: String,discussContent:String) = dbQuery {
+        println("delete discuss ")
+        println(course_name)
+        println(discuss_name)
+        println(discussContent)
+        DiscussEntity.find {
+            (DiscussTable.course_name eq course_name) and (DiscussTable.name eq discuss_name) and (DiscussTable.content eq discussContent)
+        }.forEach { it.delete() }
     }
 }
 
