@@ -37,3 +37,10 @@ data class StudentofCoursesRequest(
 data class StudentofCourseResponse(
     val name:String,
 )
+
+@Serializable
+data class CourseChange(
+    val course_name:String,
+    val courseDescription:String,
+    val id:Int,
+)

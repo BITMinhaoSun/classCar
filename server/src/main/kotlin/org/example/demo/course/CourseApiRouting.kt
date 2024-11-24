@@ -50,6 +50,14 @@ fun Application.courseRouting() {
                     req.teacher
                 )
             }
+            post("/course/change") {
+                val req = call.receive<CourseChange>()
+                courseDao.changeCourse(
+                    req.course_name,
+                    req.courseDescription,
+                    req.id
+                )
+            }
             post("/studentofcourse") {
                 val req =  call.receive<StudentofCoursesRequest>()
                 val courses = courseDao.getStudentsOfCourse(

@@ -170,6 +170,12 @@ fun App() {
                 )
             }
             composable("updateInfoPage") { UpdateInfoPage(navController,name) }
+            composable("changeCoursePage/{course_name}/{course_description}/{course_id}") {backStackEntry ->
+                val courseName = backStackEntry.arguments?.getString("course_name")!!
+                val courseDescription = backStackEntry.arguments?.getString("course_description")!!
+                val id = backStackEntry.arguments?.getString("course_id")!!.toInt()
+                ChangeCoursePage(navController, name, role,course_name=courseName ,courseDescription=courseDescription ,id=id)
+            }
         }
     }
 }
