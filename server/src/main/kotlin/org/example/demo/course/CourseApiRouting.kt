@@ -9,6 +9,26 @@ import org.example.demo.lesson.lessonDao
 
 fun Application.courseRouting() {
     routing {
+        route("/course"){
+            post("/delete_course/{id}") {
+                val course_id = (call.parameters["id"])?.toInt()
+
+
+                println("CourseApiRouting")
+                println("delete course")
+                println(course_id)
+
+                try {
+                    // 调用挂起函数删除记录
+                    course_id?.let { courseDao.deleteCourse(it) }
+
+                    call.respond(HttpStatusCode.OK, "Course deleted successfully")
+                } catch (e: Exception) {
+                    // 捕获异常并返回错误信息
+                    call.respond(HttpStatusCode.InternalServerError, "Failed to delete course: ${e.message}")
+                }
+            }
+        }
         route("/teacher") {
             post("/courses/{num}") {
                 val req =  call.receive<CoursesRequest>()
@@ -79,6 +99,7 @@ fun Application.courseRouting() {
                     call.respond(HttpStatusCode.InternalServerError, "Failed to delete student: ${e.message}")
                 }
             }
+
         }
     }
 }

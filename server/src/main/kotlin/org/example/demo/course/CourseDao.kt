@@ -59,6 +59,13 @@ class CourseDaoImpl {
             (StudentCourseTable.course eq courseId) and (StudentCourseTable.student eq studentId)
         }
     }
+    suspend fun deleteCourse(course_id:Int) = dbQuery {
+        println("delete course ")
+        println(course_id)
+        CourseEntity.find {
+            (CourseTable.id eq course_id)
+        }.forEach { it.delete() }
+    }
 }
 
 val courseDao = CourseDaoImpl()

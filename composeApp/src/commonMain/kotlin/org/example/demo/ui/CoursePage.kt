@@ -186,7 +186,12 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                 }
             )
         }
-
+        fun deleteCourse(id:Int) = scope.launch {
+            println("delete course $id")
+            client.post("/course/delete_course/$id")
+            delay(100L)
+            refresh() // 删除后刷新列表
+        }
         Box(
             modifier = Modifier.fillMaxSize().padding(it),
             contentAlignment = Alignment.Center
@@ -205,6 +210,8 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                     CourseCard(
                         course.name,
                         course.id,
+                        role,
+                        onDelete= { deleteCourse(course.id) },
                         course.teacher,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             navController.navigate("courseDetailPage/${course.id}/${course.name}/${course.description}/${course.teacher}")
@@ -231,16 +238,35 @@ fun CoursePage(navController: NavController, name: String, role: String) {
 fun CourseCard(
     courseName: String,
     id: Int,
+    role: String,
+    onDelete: () -> Unit,
     teacherName: String,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier = modifier) {
-        Column(
-            modifier = Modifier.padding(10.dp)
-        ) {
-            Text(courseName, style = MaterialTheme.typography.titleMedium)
-            Text("ID: $id", style = MaterialTheme.typography.bodySmall)
-            Text(teacherName, style = MaterialTheme.typography.bodyMedium)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ){
+        Card(modifier = modifier) {
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(courseName, style = MaterialTheme.typography.titleMedium)
+                Text("ID: $id", style = MaterialTheme.typography.bodySmall)
+                Text(teacherName, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (role == "teacher") {
+                IconButton(
+                    onClick = {
+                        onDelete(
+
+                        )
+                    }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }
