@@ -36,6 +36,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import io.ktor.client.call.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import org.example.demo.util.*
 
@@ -47,7 +48,10 @@ import org.jetbrains.compose.resources.painterResource
 fun QuestionBankPage(
     name:String,
     role:String,
-    navController: NavController) {
+    navController: NavController,
+    reference: Boolean,
+    onClickQuestion: suspend CoroutineScope.(Int) -> Unit
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -65,31 +69,33 @@ fun QuestionBankPage(
                 }
             },
             bottomBar = {
-                NavigationBar {
-                    NavigationBarItem(
-                        icon = {
-                            Icon(painterResource(Res.drawable.course), "course")
-                        },
-                        label ={ Text("课程") },
-                        selected = false,
-                        onClick = {navController.navigate("coursePage")}
-                    )
-                    NavigationBarItem(
-                        icon = {
-                            Icon(painterResource(Res.drawable.question_bank), "question_bank")
-                        },
-                        label ={ Text("题库") },
-                        selected = true,
-                        onClick = { navController.navigate("questionBankPage") }
-                    )
-                    NavigationBarItem(
-                        icon = {
-                            Icon(painterResource(Res.drawable.my), "my")
-                        },
-                        label ={ Text("我的") },
-                        selected = false,
-                        onClick = { navController.navigate("myInfoPage") }
-                    )
+                if (!reference) {
+                    NavigationBar {
+                        NavigationBarItem(
+                            icon = {
+                                Icon(painterResource(Res.drawable.course), "course")
+                            },
+                            label = { Text("课程") },
+                            selected = false,
+                            onClick = { navController.navigate("coursePage") }
+                        )
+                        NavigationBarItem(
+                            icon = {
+                                Icon(painterResource(Res.drawable.question_bank), "question_bank")
+                            },
+                            label = { Text("题库") },
+                            selected = true,
+                            onClick = { navController.navigate("questionBankPage/${false}/${-1}") }
+                        )
+                        NavigationBarItem(
+                            icon = {
+                                Icon(painterResource(Res.drawable.my), "my")
+                            },
+                            label = { Text("我的") },
+                            selected = false,
+                            onClick = { navController.navigate("myInfoPage") }
+                        )
+                    }
                 }
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
@@ -358,7 +364,13 @@ fun QuestionBankPage(
                                 question.id,
                                 question.description,
                                 role,
-                                onClick = {/*TODO*/},
+                                onClick = {
+                                    if (reference) {
+                                        scope.launch {
+                                            onClickQuestion(question.id)
+                                        }
+                                    }
+                                },
                                 onDelete = {
                                     println("=======================")
                                     println(question.id)
@@ -422,7 +434,7 @@ fun QuestionBankPage(
                             Text("+创建题目")
 
                         }
-                                             }
+                    }
                 }
 
             }

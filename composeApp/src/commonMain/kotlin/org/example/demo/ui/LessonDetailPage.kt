@@ -52,10 +52,17 @@ fun LessonDetailPage(
         },
         floatingActionButton = {
             if (role == "teacher") {
-                Button(onClick = {
-                    navController.navigate("createQuestionPage/${lessonId}")
-                }) {
-                    Text("+ 新建题目")
+                Column {
+                    Button(onClick = {
+                        navController.navigate("createQuestionPage/${lessonId}")
+                    }) {
+                        Text("+ 新建题目")
+                    }
+                    Button(onClick = {
+                        navController.navigate("questionBankPage/${true}/${lessonId}")
+                    }) {
+                        Text("= 引用题库中题目")
+                    }
                 }
             }
         },

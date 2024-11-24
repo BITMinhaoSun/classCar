@@ -88,6 +88,11 @@ fun Application.questionRouting() {
                 }
                 call.respond(res)
             }
+            post("/question/clone/{questionId}/{lessonId}") {
+                val questionId = call.parameters["questionId"]!!.toInt()
+                val lessonId = call.parameters["lessonId"]!!.toInt()
+                questionDao.cloneQuestion(questionId, lessonId)
+            }
         }
         route("/student") {
             get("/questions/{lessonId}") {

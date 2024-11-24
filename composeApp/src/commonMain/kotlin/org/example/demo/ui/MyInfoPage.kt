@@ -113,7 +113,7 @@ fun MyInfoPage(navController: NavController,name: String) {
                         },
                         label = { Text("题库") },
                         selected = false,
-                        onClick = { navController.navigate("questionBankPage") }
+                        onClick = { navController.navigate("questionBankPage/${false}/${-1}") }
                     )
                     NavigationBarItem(
                         icon = {

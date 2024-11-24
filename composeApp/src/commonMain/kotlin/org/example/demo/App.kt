@@ -6,11 +6,17 @@ import androidx.compose.runtime.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.ktor.client.request.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import org.example.demo.ui.*
 import org.example.demo.util.QuestionsResponse
+import org.example.demo.util.client
 
 @Composable
 @Preview
@@ -53,7 +59,20 @@ fun App() {
             }
             composable("createCoursePage") { CreateCoursePage(navController, name, role) }
             composable("myInfoPage") { MyInfoPage(navController,name) }
-            composable("questionBankPage") { QuestionBankPage(name,role,navController) }
+            composable("questionBankPage/{reference}/{lessonId}") { backStackEntry ->
+                val reference = backStackEntry.arguments?.getString("reference")!!.toBoolean()
+                val lessonId = backStackEntry.arguments?.getString("lessonId")!!.toInt()
+                QuestionBankPage(
+                    name,
+                    role,
+                    navController,
+                    reference,
+                    onClickQuestion = { questionId ->
+                        client.post("/teacher/question/clone/${questionId}/${lessonId}")
+                        navController.popBackStack()
+                    }
+                )
+            }
 //            composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
 //            composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage/{course_id}") {

@@ -33,7 +33,18 @@ class QuestionsDaoImpl {
         QuestionEntity.findById(questionId)?.delete()
     }
 
-    suspend fun cloneQuestion() = dbQuery { /* TODO */ }
+    suspend fun cloneQuestion(questionId: Int, lessonId: Int) = dbQuery {
+        val ref = QuestionEntity.findById(questionId)!!
+        QuestionEntity.new {
+            this.description = ref.description
+            this.options = ref.options
+            this.answer = ref.answer
+            this.lesson = LessonEntity.findById(lessonId)!!.id
+            this.course = CourseEntity.findById(LessonEntity.findById(lessonId)!!.course_id)!!.id
+            this.released = false
+            this.closed = false
+        }
+    }
 
     suspend fun getAllQuestionsOfLesson(lessonId: Int/*, from: Int, num: Int*/): List<Question> = dbQuery {
         QuestionEntity.find { QuestionTable.lessonId eq lessonId }
