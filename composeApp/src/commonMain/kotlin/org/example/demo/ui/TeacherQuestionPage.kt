@@ -15,10 +15,12 @@ import demo.composeapp.generated.resources.Res
 import demo.composeapp.generated.resources.add
 import demo.composeapp.generated.resources.back
 import demo.composeapp.generated.resources.delete_circle
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.launch
 import org.example.demo.util.AddQuestionRequest
+import org.example.demo.util.QuestionStatisticsResponse
 import org.example.demo.util.client
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -42,6 +44,52 @@ fun TeacherQuestionPage(
     val snackbarHostState = remember { SnackbarHostState() }
     var released by remember { mutableStateOf(questionReleased) }
     var closed by remember { mutableStateOf(questionClosed) }
+    var showDialog by remember { mutableStateOf(false) }
+    val stats = remember { mutableStateListOf<QuestionStatisticsResponse>() }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                showDialog = false
+            },
+            confirmButton = {
+                Button(onClick = {
+                    showDialog = false
+                }) {
+                    Text("关闭")
+                }
+            },
+            dismissButton = {
+            },
+            title = {
+                Text("答题情况统计")
+            },
+            text = {
+                Column {
+                    var total = stats.fold(0) { r, t ->
+                        r + t.number
+                    }
+                    if (total <= 0) {
+                        total = 1
+                    }
+                    stats.forEach {
+                        Text(it.option, style = MaterialTheme.typography.titleSmall)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            LinearProgressIndicator(
+                                progress = { it.number.toFloat() / total },
+                                gapSize = 0.dp,
+                                drawStopIndicator = {},
+                                color = if (it.option == answer) Color(0xff90e19f) else ProgressIndicatorDefaults.linearColor
+                            )
+                            Text(it.number.toString(), modifier = Modifier.width(15.dp).padding(start = 10.dp))
+                        }
+                    }
+                }
+            }
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -121,7 +169,14 @@ fun TeacherQuestionPage(
                             Button(
                                 onClick = {
                                     scope.launch {
-
+                                        val res: List<QuestionStatisticsResponse> = client
+                                            .get("/teacher/question/statistics/${questionId}")
+                                            .body()
+                                        stats.clear()
+                                        res.forEach {
+                                            stats.add(it)
+                                        }
+                                        showDialog = true
                                     }
                                 },
                                 modifier = Modifier.padding(start = 20.dp, end = 20.dp)

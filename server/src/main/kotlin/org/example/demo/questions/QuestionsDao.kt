@@ -105,7 +105,7 @@ class QuestionsDaoImpl {
                 .where { (StudentQuestionTable.question eq questionId) and (StudentQuestionTable.student eq student.id) }
                 .map { it[StudentQuestionTable.studentAnswer] }
                 .first()
-            statistic[studentAnswer] = statistic.getOrDefault(studentAnswer, 0)
+            statistic[studentAnswer] = statistic.getOrDefault(studentAnswer, 0) + 1
         }
         return@dbQuery statistic
     }
