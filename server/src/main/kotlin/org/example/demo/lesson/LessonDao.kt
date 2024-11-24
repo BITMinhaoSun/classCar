@@ -1,5 +1,7 @@
 package org.example.demo.lesson
 
+import org.example.demo.chapter.ChapterEntity
+import org.example.demo.chapter.ChapterTable
 import org.example.demo.course.*
 import org.example.demo.discuss.Discuss
 import org.example.demo.discuss.DiscussEntity
@@ -7,7 +9,9 @@ import org.example.demo.student.StudentEntity
 import org.example.demo.student.StudentTable
 import org.example.demo.utils.dbQuery
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.*
 
 class LessonDaoImpl {
     suspend fun addLesson(user: Lesson): Unit = dbQuery {
@@ -20,7 +24,14 @@ class LessonDaoImpl {
     }
     suspend fun getLessonViaCrouseId(course_id: Int) = dbQuery {
         LessonEntity.find{(LessonTable.course_id eq course_id)}.reversed().map(LessonEntity::toModel)
-}
+    }
+    suspend fun deleteLesson(lesson_id:Int) = dbQuery {
+        println("delete lesson ")
+        println(lesson_id)
+        LessonEntity.find {
+            (LessonTable.id eq lesson_id)
+        }.forEach { it.delete() }
+    }
 
 
     }

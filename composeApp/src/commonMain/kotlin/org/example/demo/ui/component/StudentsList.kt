@@ -7,9 +7,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import demo.composeapp.generated.resources.Res
+import demo.composeapp.generated.resources.delete
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.example.demo.util.StudentofCoursesRequest
 import org.example.demo.util.StudentofCourseResponse
 import org.example.demo.util.client
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -56,7 +60,13 @@ fun StudentList(
             students.add(it)
         }
     }
-
+    fun deleteStudent(courseId: Int,studentName:String) = scope.launch {
+        println("delete student $courseId")
+        println(studentName)
+        client.delete("/student/delete/$courseId/$studentName")
+        delay(100L)
+        search() // 删除后刷新列表
+    }
     Scaffold(
         floatingActionButton = {
             if (role == "teacher") {
@@ -81,6 +91,8 @@ fun StudentList(
                         navController,
                         id = id,
                         studentName = student.name,
+                        role =role,
+                        onDelete = { deleteStudent(id,student.name) },
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
                         },
@@ -98,6 +110,8 @@ fun StudentCard(
     navController: NavController,
     studentName: String,
     id: Int,
+    role: String,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier
@@ -106,10 +120,27 @@ fun StudentCard(
         println("Hello world,Im going to some Unkown Pages ")
         //   navController.navigate("discussDetail/${courseName}/${name}/${content}/${replyName}")
     }) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text( studentName, style = MaterialTheme.typography.titleMedium)
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(studentName, style = MaterialTheme.typography.titleMedium)
+            }
+            if (role == "teacher") {
+                IconButton(
+                    onClick = {
+                        onDelete(
+
+                        )
+                    }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }
