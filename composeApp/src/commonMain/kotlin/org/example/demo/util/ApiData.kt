@@ -269,3 +269,10 @@ data class DeleteKeypointRequest(
     val keypoint_content: String,
     val keypoint_name: String,
 )
+
+@Serializable
+data class CourseChange(
+    val course_name:String,
+    val courseDescription:String,
+    val id:Int,
+)

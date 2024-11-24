@@ -5,6 +5,8 @@ import org.example.demo.lesson.LessonTable
 import org.example.demo.student.StudentEntity
 import org.example.demo.student.StudentTable
 import org.example.demo.student.studentDao
+import org.example.demo.userInfo.InfoEntity
+import org.example.demo.userInfo.InfoTable
 import org.example.demo.utils.dbQuery
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
@@ -65,6 +67,18 @@ class CourseDaoImpl {
         CourseEntity.find {
             (CourseTable.id eq course_id)
         }.forEach { it.delete() }
+    }
+
+    suspend fun changeCourse(course_name:String, courseDescription:String,id:Int) = dbQuery {
+        println("change course ")
+        println(id)
+        println(course_name)
+        println(courseDescription)
+        val courseToUpdate=CourseEntity.find { CourseTable.id eq id }.firstOrNull()
+        courseToUpdate?.apply{
+            this.name = course_name
+            this.description = courseDescription
+        }?: throw Exception(" not found")
     }
 }
 

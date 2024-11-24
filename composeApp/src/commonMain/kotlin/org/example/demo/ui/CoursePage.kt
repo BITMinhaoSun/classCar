@@ -192,6 +192,8 @@ fun CoursePage(navController: NavController, name: String, role: String) {
             delay(100L)
             refresh() // 删除后刷新列表
         }
+
+
         Box(
             modifier = Modifier.fillMaxSize().padding(it),
             contentAlignment = Alignment.Center
@@ -212,6 +214,7 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                         course.id,
                         role,
                         onDelete= { deleteCourse(course.id) },
+                        onChange= { navController.navigate("changeCoursePage/${course.name}/${course.description}/${course.id}") },
                         course.teacher,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             navController.navigate("courseDetailPage/${course.id}/${course.name}/${course.description}/${course.teacher}")
@@ -240,6 +243,7 @@ fun CourseCard(
     id: Int,
     role: String,
     onDelete: () -> Unit,
+    onChange: () -> Unit,
     teacherName: String,
     modifier: Modifier = Modifier
 ) {
@@ -257,15 +261,22 @@ fun CourseCard(
                 Text(teacherName, style = MaterialTheme.typography.bodyMedium)
             }
             if (role == "teacher") {
-                IconButton(
-                    onClick = {
-                        onDelete(
+                Column{
+                    IconButton(
+                        onClick = {
+                            onDelete(
 
-                        )
-                    }) {
+                            )
+                        }) {
 //                    println("1111111111")
-                    Icon(painterResource(Res.drawable.delete), "delete")
+                        Icon(painterResource(Res.drawable.delete), "delete")
+                    }
+                    IconButton(onClick = { onChange() }) {
+//                    println("1111111111")
+                        Icon(painterResource(Res.drawable.change), "change")
+                    }
                 }
+
             }
         }
     }
