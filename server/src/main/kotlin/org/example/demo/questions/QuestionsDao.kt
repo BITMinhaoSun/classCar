@@ -94,6 +94,36 @@ class QuestionsDaoImpl {
         }
         return@dbQuery statistic
     }
+    suspend fun getReleasedQuestionsOfCourse(courseId: Int/*, from: Int, num: Int*/): List<Question> = dbQuery {
+        QuestionEntity.find { (QuestionTable.courseId eq courseId) and (QuestionTable.released eq Op.TRUE) }
+            .reversed()
+//            .drop(from)
+//            .take(num)
+            .map(QuestionEntity::toModel)
+    }
+    suspend fun getAllQuestionsOfCourse(courseId: Int/*, from: Int, num: Int*/): List<Question> = dbQuery {
+        QuestionEntity.find { (QuestionTable.courseId eq courseId) }
+            .reversed()
+//            .drop(from)
+//            .take(num)
+            .map(QuestionEntity::toModel)
+    }
+    suspend fun getAllQuestionsOfAll (): List<Question> = dbQuery {
+        QuestionEntity.all()
+            .reversed()
+//            .drop(from)
+//            .take(num)
+            .map(QuestionEntity::toModel)
+    }
+    suspend fun getAllReleasedQuestionsOfAll (): List<Question> = dbQuery {
+        QuestionEntity.all()
+            .reversed()
+//            .drop(from)
+//            .take(num)
+            .map(QuestionEntity::toModel)
+    }
+
+
 }
 
 val questionDao = QuestionsDaoImpl()

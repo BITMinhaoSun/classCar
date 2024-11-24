@@ -39,6 +39,38 @@ fun Application.questionRouting() {
                     req.lessonId
                 )
             }
+            get("/questionsBank/{courseId}") {
+                val courseId = call.parameters["courseId"]!!.toInt()
+                val questions = questionDao.getAllQuestionsOfCourse(courseId).map {
+                    QuestionsResponse(
+                        id = it.id,
+                        description = it.description,
+                        options = it.options,
+                        answer = "",
+                        lessonId = it.lessonId,
+                        courseId = it.courseId,
+                        released = it.released,
+                        closed = it.closed
+                    )
+                }
+                call.respond(questions)
+            }
+            get("/questionsBank/all") {
+                val questions = questionDao.getAllQuestionsOfAll().map {
+                    QuestionsResponse(
+                        id = it.id,
+                        description = it.description,
+                        options = it.options,
+                        answer = "",
+                        lessonId = it.lessonId,
+                        courseId = it.courseId,
+                        released = it.released,
+                        closed = it.closed
+                    )
+                }
+                call.respond(questions)
+            }
+
         }
         route("/student") {
             get("/questions/{lessonId}") {
@@ -57,6 +89,39 @@ fun Application.questionRouting() {
                 }
                 call.respond(questions)
             }
+            get("/questionsBank/{courseId}") {
+                val courseId = call.parameters["courseId"]!!.toInt()
+                val questions = questionDao.getReleasedQuestionsOfCourse(courseId).map {
+                    QuestionsResponse(
+                        id = it.id,
+                        description = it.description,
+                        options = it.options,
+                        answer = "",
+                        lessonId = it.lessonId,
+                        courseId = it.courseId,
+                        released = it.released,
+                        closed = it.closed
+                    )
+                }
+                call.respond(questions)
+            }
+            get("/questionsBank/all") {
+                val questions = questionDao.getAllReleasedQuestionsOfAll().map {
+                    QuestionsResponse(
+                        id = it.id,
+                        description = it.description,
+                        options = it.options,
+                        answer = "",
+                        lessonId = it.lessonId,
+                        courseId = it.courseId,
+                        released = it.released,
+                        closed = it.closed
+                    )
+                }
+                call.respond(questions)
+            }
+
+
         }
     }
 }

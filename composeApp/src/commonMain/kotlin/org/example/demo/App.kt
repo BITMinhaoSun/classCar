@@ -51,7 +51,7 @@ fun App() {
             }
             composable("createCoursePage") { CreateCoursePage(navController, name, role) }
             composable("myInfoPage") { MyInfoPage(navController) }
-            composable("questionBankPage") { QuestionBankPage(navController) }
+            composable("questionBankPage") { QuestionBankPage(name,role,navController) }
             composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
 //            composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage/{course_id}") {

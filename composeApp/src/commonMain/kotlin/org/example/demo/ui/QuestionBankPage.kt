@@ -5,11 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,8 +18,6 @@ import demo.composeapp.generated.resources.question_bank
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.launch
-import org.example.demo.util.CourseRequest
-import org.example.demo.util.client
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -33,22 +26,35 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.KeyboardType
+import io.ktor.client.call.*
+import kotlinx.coroutines.delay
+import org.example.demo.util.*
 
 import org.jetbrains.compose.resources.painterResource
 
 
 @Composable
 @Preview
-fun QuestionBankPage(navController: NavController) {
+fun QuestionBankPage(
+    name:String,
+    role:String,
+    navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+
+        val questions = remember { mutableStateListOf<QuestionsResponse>() }
+        var filted_questions = remember { mutableStateListOf<QuestionsResponse>() }
+        val scope = rememberCoroutineScope()
         Scaffold(
             topBar = {
                 IconButton(
@@ -87,67 +93,67 @@ fun QuestionBankPage(navController: NavController) {
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
         ) {
-//            Box(
-//                modifier = Modifier.fillMaxSize().padding(it),
-//                contentAlignment = Alignment.Center
-//            ) {
-//                LazyColumn(contentPadding = PaddingValues(5.dp)) {
-//                    item {
-//                        Card(modifier = Modifier.padding(5.dp).clickable {
-//                            navController.navigate("QuestionPage")
-//                        }) {
-//                            Column(
-//                                modifier = Modifier.fillMaxWidth().padding(5.dp)
-//                            ) {
-//                                Text("完整的计算机系统由（　　）组成。")
-//                                Text("[图片]")
-//                            }
-//                        }
-//                    }
-//                    (2..10).forEach {
-//                        item {
-//                            Card(modifier = Modifier.padding(5.dp).clickable{
-//                                navController.navigate("QuestionPage")
-//                            }) {
-//                                Column(
-//                                    modifier = Modifier.fillMaxWidth().padding(5.dp)
-//                                ) {
-//                                    Text("题目$it")
-//                                    Text("[图片]")
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                Button(
-//                    onClick = {
-//                        // 这里添加点击按钮后的导航或其他逻辑，比如导航到创建题目页面
-//                        navController.navigate("CreateQuestionPage")
-//                    },
-//                    modifier = Modifier
-//                        .align(Alignment.BottomEnd)
-//                        .padding(16.dp)
-//                ) {
-//                    Text("+创建题目")
-//                }
-//            }
-//        }
-//    }
-//}
             Box(
                 modifier = Modifier.fillMaxSize().padding(it),
                 contentAlignment = Alignment.TopCenter
             ) {
+                val courses = remember { mutableStateListOf<CourseResponse>() }
+                var expandedCourse by remember { mutableStateOf(false) }
+                var selectedCourse by remember { mutableStateOf(" ") }
+                var selectedCourse_id by remember { mutableStateOf(-1) }
+                // -1代表全部
+                val lessons = remember { mutableStateListOf<SearchLessonResponse>() }
+                var selectedLesson by remember { mutableStateOf("") }
+                var selectedLesson_id by remember { mutableStateOf(-1) }
+                //-1代表全部
+                var expandedLesson by remember { mutableStateOf(false) }
+                var text by remember { mutableStateOf("") }
                 Column {
+                    Text(text = "搜索题目: $text")
+                    TextField(
+                        value = text,
+                        onValueChange = { newText ->
+                            text = newText
+                            // 在这里可以进行文字检测相关的逻辑处理
+                            // 例如，检查是否包含特定字符、是否符合某种格式等
+                            if (newText.contains("error")) {
+                                // 如果检测到特定字符，可进行相应提示或操作
+                                // 这里简单打印一条信息
+                                println("检测到错误相关字符")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                    )
+
+
+                    //=============================================================================
+                    //课程下拉栏从这开始
                     // 课程下拉栏
-                    var expandedCourse by remember { mutableStateOf(false) }
-                    var selectedCourse by remember { mutableStateOf("") }
+
+
+                    fun searchCourse() = scope.launch {
+                        //  selectedCourse_id = -1
+
+                        val result: List<CourseResponse> = client.post("/$role/courses/0") {
+                            contentType(ContentType.Application.Json)
+                            setBody(CoursesRequest(name))
+                        }.body()
+                        courses.clear()
+                        delay(100L)
+                        result.forEach {
+                            courses.add(it)
+                        }
+                    }
                     OutlinedTextField(
                         value = selectedCourse,
                         onValueChange = { selectedCourse = it },
                         label = { Text("选择课程") },
                         trailingIcon = {
-                            IconButton(onClick = { expandedCourse = true }) {
+                            IconButton(onClick = {
+                                searchCourse()
+                                expandedCourse = true
+                            }) {
                                 Icon(
                                     painterResource(Res.drawable.avatar),
                                     "avatar",
@@ -162,63 +168,58 @@ fun QuestionBankPage(navController: NavController) {
                         onDismissRequest = { expandedCourse = false },
                         modifier = Modifier.width(100.dp)
                     ) {
-                        listOf("课程 1", "课程 2", "课程 3").forEach { course ->
+                        courses.forEach { course ->
                             DropdownMenuItem(
-                                text = { Text(course) },
+                                text = { Text(course.name) },
                                 onClick = {
-                                    selectedCourse = course
+                                    selectedCourse = course.name
+                                    selectedCourse_id = course.id
                                     expandedCourse = false
                                 }
                             )
                         }
-                    }
-                    var selectedSection by remember { mutableStateOf("") }
-                    if (selectedCourse.isNotEmpty()) {
-                        // 章节下拉栏
-                        var expandedSection by remember { mutableStateOf(false) }
-
-                        OutlinedTextField(
-                            value = selectedSection,
-                            onValueChange = { selectedSection = it },
-                            label = { Text("选择章节") },
-                            trailingIcon = {
-                                IconButton(onClick = { expandedSection = true }) {
-                                    Icon(
-                                        painterResource(Res.drawable.avatar),
-                                        "avatar",
-                                        modifier = Modifier.size(10.dp)
-                                    )
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        DropdownMenu(
-                            expanded = expandedSection,
-                            onDismissRequest = { expandedSection = false },
-                            modifier = Modifier.width(100.dp)
-                        ) {
-                            listOf("章节 1", "章节 2", "章节 3").forEach { section ->
-                                DropdownMenuItem(
-                                    text = { Text(section) },
-                                    onClick = {
-                                        selectedSection = section
-                                        expandedSection = false
-                                    }
-                                )
+                        //选择全部，对于这些参数更新为默认值
+                        DropdownMenuItem(
+                            text = { Text("全部课程") },
+                            onClick = {
+                                selectedCourse = "全部课程"
+                                selectedCourse_id = -1
+                                expandedCourse = false
+                                selectedLesson_id = -1
+                                selectedLesson = " "
                             }
+                        )
+
+                    }
+                    //===========================================上面是课程的
+
+                    fun searchLesson() = scope.launch {
+                        val result: List<SearchLessonResponse> = client.post("/lesson/search") {
+                            contentType(ContentType.Application.Json)
+                            setBody(SearchLessonRequest(selectedCourse_id))
+                        }.body()
+                        lessons.clear()
+                        delay(100L)
+                        result.forEach {
+                            lessons.add(it)
                         }
                     }
-                    if (selectedCourse.isNotEmpty() and selectedSection.isNotEmpty()) {
-                        // 知识点下拉栏
-                        var expandedKnowledgePoint by remember { mutableStateOf(false) }
-                        var selectedKnowledgePoint by remember { mutableStateOf("") }
+                    LaunchedEffect(selectedCourse_id) {
+                        scope.launch {
+                            selectedLesson = " "
+                            selectedLesson_id = -1
+                        }
+                        }
+                    if (selectedCourse_id != -1) {
+                        // 课堂下拉栏
                         OutlinedTextField(
-                            value = selectedKnowledgePoint,
-                            onValueChange = { selectedKnowledgePoint = it },
-                            label = { Text("选择知识点") },
+                            value = selectedLesson,
+                            onValueChange = { selectedLesson = it },
+                            label = { Text("选择课堂") },
                             trailingIcon = {
                                 IconButton(onClick = {
-                                    expandedKnowledgePoint = true
+                                    expandedLesson = true
+                                    searchLesson()
                                 }) {
                                     Icon(
                                         painterResource(Res.drawable.avatar),
@@ -230,63 +231,157 @@ fun QuestionBankPage(navController: NavController) {
                             modifier = Modifier.fillMaxWidth()
                         )
                         DropdownMenu(
-                            expanded = expandedKnowledgePoint,
-                            onDismissRequest = { expandedKnowledgePoint = false },
+                            expanded = expandedLesson,
+                            onDismissRequest = { expandedLesson = false },
                             modifier = Modifier.width(100.dp)
                         ) {
-                            listOf("知识点 1", "知识点 2", "知识点 3").forEach { knowledgePoint ->
+                            lessons.forEach { lesson ->
                                 DropdownMenuItem(
-                                    text = { Text(knowledgePoint) },
+                                    text = { Text(lesson.name) },
                                     onClick = {
-                                        selectedKnowledgePoint = knowledgePoint
-                                        expandedKnowledgePoint = false
+                                        selectedLesson = lesson.name
+                                        selectedLesson_id = lesson.lesson_id
+                                        expandedLesson = false
                                     }
                                 )
                             }
+                            DropdownMenuItem(
+                                text = { Text("全部课堂") },
+                                onClick = {
+                                    selectedLesson = "全部课堂"
+                                    selectedLesson_id = -1
+                                    expandedLesson = false
+                                }
+                            )
+
                         }
                     }
-                    // 题目列表
-                    LazyColumn(contentPadding = PaddingValues(5.dp)) {
-                        item {
-                            Card(modifier = Modifier.padding(5.dp).clickable {
-                                navController.navigate("QuestionPage")
-                            }) {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth().padding(5.dp)
-                                ) {
-                                    Text("完整的计算机系统由（　　）组成。")
-                                    Text("[图片]")
+
+
+                    //课堂到上面结束
+                    //===================================================
+                    //selectedLesson_id
+                    //selectedCourse_id
+                    LaunchedEffect(  selectedLesson_id,
+                        selectedCourse_id) {
+                        scope.launch {
+                            questions.clear()
+                            if(selectedCourse_id == -1){
+                                val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/all").body()
+                                questions.clear()
+                                result0.forEach {question ->
+                                if(question.description.contains(text)){
+                                    questions.add(question)
+                                }
                                 }
                             }
-                        }
-                        (2..10).forEach {
-                            item {
-                                Card(modifier = Modifier.padding(5.dp).clickable {
-                                    navController.navigate("QuestionPage")
-                                }) {
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth().padding(5.dp)
-                                    ) {
-                                        Text("题目$it")
-                                        Text("[图片]")
+                            if(selectedCourse_id != -1
+                                && selectedLesson_id == -1){
+                                val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/$selectedCourse_id").body()
+                                questions.clear()
+//                                result0.forEach {
+//                                    questions.add(it)
+//                                }
+                                result0.forEach {question ->
+                                    if(question.description.contains(text)){
+                                        questions.add(question)
+                                    }
+                                }
+                            }
+                            if(selectedCourse_id != -1
+                                && selectedLesson_id != -1){
+                                val result0: List<QuestionsResponse> = client.get("/${role}/questions/$selectedLesson_id").body()
+                                questions.clear()
+//                                result0.forEach {
+//                                    questions.add(it)
+//                                }
+                                result0.forEach {question ->
+                                    if(question.description.contains(text)){
+                                        questions.add(question)
                                     }
                                 }
                             }
                         }
                     }
+                    //考虑不用这种方法
+//                    LaunchedEffect(text,questions) {
+//                                //搜索有问题
+//                        scope.launch {
+//                            val Text = text
+//                            filted_questions.clear()
+//                           // filted_questions = questions
+//                            questions.forEach { question ->
+//                                val description = question.description // 同样将描述信息转换为小写
+//                                if (description.contains(Text)) {
+//                                    filted_questions.add(question)
+//                                }
+//                            }
+//                        }
+//                    }
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
+                    ) {
+                        items(questions) {
+                            QuestionBriefCard(
+                                it.id,
+                                it.description,
+                                role,
+                                onClick = {/*TODO*/},
+                                onDelete = {/*TODO*/},
+                                Modifier.padding(5.dp).fillMaxWidth()
+                            )
+                        }
+                    }
+                    //
+                    // 题目列表
+//                    LazyColumn(contentPadding = PaddingValues(5.dp)) {
+//                        item {
+//                            Card(modifier = Modifier.padding(5.dp).clickable {
+//                                navController.navigate("QuestionPage")
+//                            }) {
+//                                Column(
+//                                    modifier = Modifier.fillMaxWidth().padding(5.dp)
+//                                ) {
+//                                    Text("完整的计算机系统由（　　）组成。")
+//                                    Text("[图片]")
+//                                }
+//                            }
+//                        }
+//                        (2..10).forEach {
+//                            item {
+//                                Card(modifier = Modifier.padding(5.dp).clickable {
+//                                    navController.navigate("QuestionPage")
+//                                }) {
+//                                    Column(
+//                                        modifier = Modifier.fillMaxWidth().padding(5.dp)
+//                                    ) {
+//                                        Text("题目$it")
+//                                        Text("[图片]")
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
 
                 }
-                Button(
-                    onClick = {
-                        // 这里添加点击按钮后的导航或其他逻辑，比如导航到创建题目页面
-                        navController.navigate("CreateQuestionPage")
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(16.dp)
-                ) {
-                    Text("+创建题目")
+                if(role == "teacher"){
+                    if (selectedLesson_id != -1) {
+                        Button(
+                            onClick = {
+                                navController.navigate("createQuestionPage/${selectedLesson_id}")
+
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .padding(16.dp)
+                        ) {
+                            Text("+创建题目")
+
+                        }
+                                             }
                 }
+
             }
         }
     }
