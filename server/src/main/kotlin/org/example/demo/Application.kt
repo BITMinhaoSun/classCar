@@ -5,6 +5,7 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
+import org.example.demo.Info.InfoRouting
 import org.example.demo.course.CourseEntity
 import org.example.demo.course.CourseTable
 import org.example.demo.course.StudentCourseTable
@@ -13,7 +14,6 @@ import org.example.demo.lesson.LessonTable
 import org.example.demo.lesson.lessonsRouting
 import org.example.demo.questions.QuestionTable
 import org.example.demo.questions.StudentQuestionTable
-import org.example.demo.student.StudentEntity
 import org.example.demo.student.StudentTable
 import org.example.demo.student.studentRouting
 import org.example.demo.discuss.DiscussRouting
@@ -21,19 +21,17 @@ import org.example.demo.teacher.*
 import org.example.demo.chapter.*
 import org.example.demo.courseFile.FileDescriptionTable
 import org.example.demo.courseFile.fileRouting
-import org.example.demo.discuss.DiscussEntity
 import org.example.demo.keypoint.*
-import org.example.demo.utils.dbQuery
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
 import org.example.demo.discuss.DiscussTable
+import org.example.demo.userInfo.InfoTable
 import org.example.demo.lesson.LessonEntity
 import org.example.demo.questions.QuestionEntity
 import org.example.demo.questions.questionRouting
-import org.example.demo.reply.ReplyEntity
 import org.example.demo.reply.ReplyRouting
 import org.example.demo.reply.ReplyTable
+import org.example.demo.userInfo.InfoEntity
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main() {
@@ -61,44 +59,45 @@ fun Application.module() {
         SchemaUtils.create(FileDescriptionTable)
         SchemaUtils.create(QuestionTable)
         SchemaUtils.create(StudentQuestionTable)
+        SchemaUtils.create(InfoTable)
 //        TeacherEntity.new {
 //            name = "111"
 //            password = "111"
 //        }
-        (1..20).forEach {
-            CourseEntity.new {
-                name = "课程$it"
-                description = "课程${it}的描述的描述的描述"
-                creator = "111"
-            }
-        }
-        (1..20).forEach {
-            LessonEntity.new {
-                description="$it"
-                name = "111"
-                course_id = 1
-            }
-        }
-        (1..10).forEach {
-            QuestionEntity.new {
-                this.description = "jsdkalfjaskdlffajielfwaiefjalsdfkj"
-                this.options = listOf("A","B","C")
-                this.answer = "A"
-                this.lesson = LessonEntity.findById(1)!!.id
-                this.course = CourseEntity.findById(LessonEntity.findById(1)!!.course_id)!!.id
-                this.released = false
-                this.closed = false
-            }
-        }
 //        (1..20).forEach {
-//            ReplyEntity.new {
-//                course_name="aaa"
-//                name = "111"
-//                content = "评论${it}的描述"
-//                reply_name = "回复$it"
-//                reply_content = "回复${it}的描述"
+//            CourseEntity.new {
+//                name = "课程$it"
+//                description = "课程${it}的描述的描述的描述"
+//                creator = "111"
 //            }
 //        }
+//        (1..20).forEach {
+//            LessonEntity.new {
+//                description="$it"
+//                name = "111"
+//                course_id = 1
+//            }
+//        }
+//        (1..10).forEach {
+//            QuestionEntity.new {
+//                this.description = "jsdkalfjaskdlffajielfwaiefjalsdfkj"
+//                this.options = listOf("A","B","C")
+//                this.answer = "A"
+//                this.lesson = LessonEntity.findById(1)!!.id
+//                this.course = CourseEntity.findById(LessonEntity.findById(1)!!.course_id)!!.id
+//                this.released = false
+//                this.closed = false
+//            }
+//        }
+
+//            InfoEntity.new {
+//                school="bit"
+//                name = "111"
+//                e_mail="1120212442@bit.edu.cn"
+//                avatar=1
+//                phone_number="110"
+//            }
+
 //        (1..20).forEach {
 //            ChapterEntity.new {
 //                course_name="$it"
@@ -153,4 +152,5 @@ fun Application.module() {
     KeypointRouting()
     fileRouting()
     questionRouting()
+    InfoRouting()
 }

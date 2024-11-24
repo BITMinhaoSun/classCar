@@ -21,3 +21,7 @@ data class AddQuestionRequest(
     val answer: String,
     val lessonId: Int,
 )
+@Serializable
+data class DeleteQuestionRequest(
+    val id: Int,
+)

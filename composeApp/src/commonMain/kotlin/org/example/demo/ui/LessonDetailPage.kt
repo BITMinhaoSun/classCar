@@ -20,6 +20,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.demo.getPlatform
+import org.example.demo.util.DeleteQuestionRequest
 import org.example.demo.util.QuestionsResponse
 import org.example.demo.util.client
 import org.jetbrains.compose.resources.painterResource
@@ -67,13 +68,22 @@ fun LessonDetailPage(
             LazyColumn(
                 modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
             ) {
-                items(questions) {
+                items(questions) { question->
                     QuestionBriefCard(
-                        it.id,
-                        it.description,
+                        question.id,
+                        question.description,
                         role,
                         onClick = {/*TODO*/},
-                        onDelete = {/*TODO*/},
+                        onDelete = {
+                            println("=======================")
+                            println(question.id)
+                            println("=======================")
+                            println("Request Body: ${DeleteQuestionRequest(question.id)}")
+                            scope.launch {
+                                client.post("/teacher/question/delete/${question.id}")
+
+                            }
+                        },
                         Modifier.padding(5.dp).fillMaxWidth()
                     )
                 }

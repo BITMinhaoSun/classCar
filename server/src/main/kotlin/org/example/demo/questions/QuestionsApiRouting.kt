@@ -70,6 +70,13 @@ fun Application.questionRouting() {
                 }
                 call.respond(questions)
             }
+            post("/question/delete/{id}") {
+                val qId = call.parameters["id"]!!.toInt()
+                println("================================================")
+                println(qId )
+                println("================================================")
+                questionDao.deleteQuestion(qId)
+            }
 
         }
         route("/student") {

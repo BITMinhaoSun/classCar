@@ -108,6 +108,7 @@ fun QuestionBankPage(
                 //-1代表全部
                 var expandedLesson by remember { mutableStateOf(false) }
                 var buttonClicked by remember { mutableStateOf(false) }
+                var delete_buttonClicked by remember { mutableStateOf(false) }
                 var text by remember { mutableStateOf("") }
                 Column {
                     Text(text = "搜索题目: $text")
@@ -271,9 +272,11 @@ fun QuestionBankPage(
                     //selectedLesson_id
                     //selectedCourse_id
                     LaunchedEffect(  selectedLesson_id,
-                        selectedCourse_id,buttonClicked) {
+                        selectedCourse_id,buttonClicked,delete_buttonClicked) {
                         scope.launch {
                             buttonClicked = false
+                            delete_buttonClicked = false
+
                             questions.clear()
                             if(selectedCourse_id == -1){
                                 val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/all").body()
@@ -331,13 +334,23 @@ fun QuestionBankPage(
                     LazyColumn(
                         modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
                     ) {
-                        items(questions) {
+                        items(questions) { question->
                             QuestionBriefCard(
-                                it.id,
-                                it.description,
+                                question.id,
+                                question.description,
                                 role,
                                 onClick = {/*TODO*/},
-                                onDelete = {/*TODO*/},
+                                onDelete = {
+                                    println("=======================")
+                                    println(question.id)
+                                    println("=======================")
+                                    println("Request Body: ${DeleteQuestionRequest(question.id)}")
+                                    scope.launch {
+                                        client.post("/teacher/question/delete/${question.id}")
+
+                                    }
+                                    delete_buttonClicked = true
+                                },
                                 Modifier.padding(5.dp).fillMaxWidth()
                             )
                         }
