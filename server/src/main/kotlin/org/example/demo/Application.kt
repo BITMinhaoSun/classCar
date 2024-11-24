@@ -64,6 +64,37 @@ fun Application.module() {
 //            name = "111"
 //            password = "111"
 //        }
+        /*
+        TeacherEntity.new {
+            name = "111"
+            password = "111"
+        }
+        (1..20).forEach {
+            CourseEntity.new {
+                name = "课程$it"
+                description = "课程${it}的描述的描述的描述"
+                creator = "111"
+            }
+        }
+        (1..20).forEach {
+            LessonEntity.new {
+                description="$it"
+                name = "111"
+                course_id = 1
+            }
+        }
+        (1..10).forEach {
+            QuestionEntity.new {
+                this.description = "jsdkalfjaskdlffajielfwaiefjalsdfkj"
+                this.options = listOf("A","B","C")
+                this.answer = "A"
+                this.lesson = LessonEntity.findById(1)!!.id
+                this.course = CourseEntity.findById(LessonEntity.findById(1)!!.course_id)!!.id
+                this.released = false
+                this.closed = false
+            }
+        }
+        */
 //        (1..20).forEach {
 //            CourseEntity.new {
 //                name = "课程$it"

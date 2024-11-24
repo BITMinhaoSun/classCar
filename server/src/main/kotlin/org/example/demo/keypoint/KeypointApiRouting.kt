@@ -1,14 +1,5 @@
 package org.example.demo.keypoint
 
-import org.example.demo.reply.ReplySearchResponse
-
-
-
-import org.example.demo.reply.ReplySearchRequest
-import org.example.demo.reply.ReplyAddRequest
-import org.example.demo.reply.Reply
-import org.example.demo.reply.replyDao
-
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -18,7 +9,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.flow.Flow
 import org.example.demo.course.CourseResponse
 import org.example.demo.course.CoursesRequest
-import org.example.demo.reply.replyDao
+import org.example.demo.reply.*
 
 fun Application.KeypointRouting() {
     routing {
@@ -55,6 +46,25 @@ fun Application.KeypointRouting() {
                         keypoint_name = req.keypoint_name
                     )
                 )
+            }
+            post("/delete") {
+
+
+                println("keypointApiRouting")
+                println("delete keypoint")
+                val req = call.receive<DeleteKeypointRequest>()
+                keypointDao.deletekeypoint(
+                    Keypoint(
+                        name=req.name,
+                        content=req.content,
+                        course_name=req.course_name,
+                        keypoint_content=req.keypoint_content,
+                        keypoint_name=req.keypoint_name
+                    )
+                )
+                println(req.keypoint_content)
+                println(req.keypoint_name)
+
             }
         }
     }

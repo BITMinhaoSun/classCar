@@ -225,3 +225,41 @@ data class UpdateInfoResponse(
 data class DeleteQuestionRequest(
     val id: Int,
 )
+
+
+@Serializable
+data class ReplyDeleteRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val reply_content: String,
+    val reply_name: String,
+)
+
+@Serializable
+data class StudentQuestionDetailResponse(
+    val id: Int,
+    val description: String,
+    val options: List<String>,
+    val standardAnswer: String,
+    val myAnswer: String,
+    val lessonId: Int,
+    val courseId: Int,
+    val released: Boolean,
+    val closed: Boolean,
+)
+
+@Serializable
+data class AnswerQuestionRequest(
+    val student: String,
+    val questionId: Int,
+    val answer: String,
+)
+@Serializable
+data class DeleteKeypointRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String,
+)

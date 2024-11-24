@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import demo.composeapp.generated.resources.Res
 import demo.composeapp.generated.resources.avatar
 import demo.composeapp.generated.resources.back
+import demo.composeapp.generated.resources.delete
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -48,8 +49,9 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun DiscussDetailPage(navController: NavController,
                       course_name: String,
-                        name: String,
+                      name: String,
                       content: String,
+                      role: String,
                       reply_name:String,
 ) {
     val replies = remember { mutableStateListOf<ReplySearchResponse>() }
@@ -67,9 +69,9 @@ fun DiscussDetailPage(navController: NavController,
         }.body()
         if (result!= null && result.isNotEmpty()) {
             for (reply in result) {
-                println("讨论课程: ${reply.course_name}")
-                println("讨论名称: ${reply.name}")
-                println("讨论内容: ${reply.content}")
+                println("course_nam: ${reply.course_name}")
+                println("discuss_name: ${reply.name}")
+                println("discuss_content: ${reply.content}")
                 println("------------------------")
             }
         } else {
@@ -81,7 +83,24 @@ fun DiscussDetailPage(navController: NavController,
             replies.add(it)
         }
     }
-
+    fun deleteReply(name:String,content:String,course_name:String,reply_content:String,reply_name:String) = scope.launch {
+        println("delete reply $reply_content")
+        println("delete reply $reply_name")
+        client.post("/reply/delete"){
+            contentType(ContentType.Application.Json)
+            setBody(
+                ReplyDeleteRequest(
+                    course_name = course_name,
+                    name = name,
+                    reply_content = reply_content,
+                    content = content,
+                    reply_name= reply_name,
+                )
+            )
+        }
+        delay(100L)
+        search() // 删除后刷新列表
+    }
     Scaffold(
         topBar = {
             IconButton(
@@ -111,9 +130,10 @@ fun DiscussDetailPage(navController: NavController,
                 items(replies) { reply ->
                     ReplyCard(
                         navController,
-                        name = reply.name,
+                        name = reply.reply_name,
                         content = reply.reply_content,
-                        // content = reply.reply_content,
+                        role =role,
+                        onDelete = { deleteReply(name=reply.name,content=reply.content,course_name=reply.course_name,reply_content=reply.reply_content,reply_name=reply.reply_name) },
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
                         },
@@ -130,17 +150,36 @@ fun ReplyCard(
     navController: NavController,
     content: String,
     name:  String,
+    role: String,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
 
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text( name, style = MaterialTheme.typography.titleMedium)
-            Text(content, style = MaterialTheme.typography.bodyMedium)
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(name, style = MaterialTheme.typography.titleMedium)
+                Text(content, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (role == "teacher") {
+                IconButton(
+                    onClick = {
+                        onDelete(
+
+                        )
+                    }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }

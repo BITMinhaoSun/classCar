@@ -26,3 +26,12 @@ data class ReplySearchResponse(
     val reply_content: String,
     val reply_name: String
 )
+
+@Serializable
+data class ReplyDeleteRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val reply_content: String,
+    val reply_name: String,
+)

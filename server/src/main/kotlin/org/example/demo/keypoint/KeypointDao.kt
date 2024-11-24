@@ -10,6 +10,9 @@ import org.example.demo.utils.dbQuery
 import kotlinx.coroutines.flow.flow
 import org.example.demo.course.CourseEntity
 import org.example.demo.course.CourseTable
+import org.example.demo.reply.Reply
+import org.example.demo.reply.ReplyEntity
+import org.example.demo.reply.ReplyTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 
 
@@ -30,6 +33,17 @@ class keypointDaoImpl{
                     (KeypointTable.content eq content) and
                     (KeypointTable.name eq name)
         }.reversed().map(KeypointEntity::toModel)
+    }
+    suspend fun deletekeypoint(user: Keypoint): Unit = dbQuery {
+        println("keypointDao")
+        println("deletekeypoint")
+        KeypointEntity.find {
+            ( KeypointTable.name eq user.name) and
+            (KeypointTable.content eq user.content) and
+            (KeypointTable.course_name eq user.course_name) and
+            (KeypointTable.keypoint_content eq user.keypoint_content) and
+            (KeypointTable.keypoint_name eq user.keypoint_name)
+        }.forEach { it.delete() }
     }
 
 }

@@ -1,5 +1,6 @@
 package org.example.demo.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.navigation.NavController
@@ -105,6 +107,21 @@ fun CreateQuestionPage(
                 modifier = Modifier.fillMaxSize().padding(10.dp)
             ) {
                 item {
+                    OutlinedTextField(
+                        "新建题目",
+                        onValueChange = {  },
+                        readOnly = true,
+                        placeholder = { Text("新建题目") },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.Transparent,
+                            unfocusedBorderColor = Color.Transparent,
+                            disabledBorderColor = Color.Transparent,
+                            errorBorderColor = Color.Transparent,
+                        ),
+                        textStyle = MaterialTheme.typography.titleLarge
+                    )
+                }
+                item {
                     // description input
                     OutlinedTextField(
                         description,
@@ -141,7 +158,12 @@ fun CreateQuestionPage(
                         },
                         shape = CircleShape,
                         border = null,
-                        modifier = Modifier.align(Alignment.Center)
+                        elevation = InputChipDefaults.inputChipElevation(elevation = 3.dp),
+                        colors = InputChipDefaults.inputChipColors(
+                            containerColor = Color.White,
+                            selectedContainerColor = Color(0xff90e19f)
+                        ),
+                        modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp)
                     )
                 }
                 item {
@@ -178,7 +200,9 @@ fun CreateQuestionPage(
                                 snackbarHostState.showSnackbar("请选择题目答案")
                             }
                         }
-                    }) {
+                    },
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    ) {
                         Text("新建题目")
                     }
                 }

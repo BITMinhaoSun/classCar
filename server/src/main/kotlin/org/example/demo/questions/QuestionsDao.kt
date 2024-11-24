@@ -4,6 +4,7 @@ import org.example.demo.course.CourseEntity
 import org.example.demo.lesson.Lesson
 import org.example.demo.lesson.LessonEntity
 import org.example.demo.lesson.LessonTable
+import org.example.demo.student.Student
 import org.example.demo.student.StudentEntity
 import org.example.demo.student.StudentTable
 import org.example.demo.teacher.TeacherEntity
@@ -12,6 +13,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.upsert
 
 class QuestionsDaoImpl {
     suspend fun addQuestion(description: String, options: List<String>, answer: String, lessonId: Int): Int = dbQuery {
@@ -61,12 +63,25 @@ class QuestionsDaoImpl {
         }
     }
 
+    suspend fun getSingleQuestion(questionId: Int) = dbQuery {
+        QuestionEntity.findById(questionId)!!.toModel()
+    }
+
+    suspend fun getStudentAnswer(questionId: Int, student: String) = dbQuery {
+        val studentId = StudentEntity.find { StudentTable.name eq student }.first().id.value
+        val studentAnswer = StudentQuestionTable.select(StudentQuestionTable.studentAnswer)
+            .where { (StudentQuestionTable.question eq questionId) and (StudentQuestionTable.student eq studentId) }
+            .map { it[StudentQuestionTable.studentAnswer] }
+            .firstOrNull()
+        return@dbQuery studentAnswer
+    }
+
     suspend fun answerQuestion(questionId: Int, student: String, answer: String): Boolean = dbQuery {
         val question = QuestionEntity.findById(questionId)
         question?.let { theQuestion ->
             if (theQuestion.released && !theQuestion.closed) {
                 if (answer in theQuestion.options) {
-                    StudentQuestionTable.insert {
+                    StudentQuestionTable.upsert {
                         it[this.question] = questionId
                         it[this.student] = StudentEntity.find { StudentTable.name eq student }.first().id
                         it[this.studentAnswer] = answer

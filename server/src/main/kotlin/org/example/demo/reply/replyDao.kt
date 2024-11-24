@@ -30,7 +30,18 @@ class replyDaoImpl{
                     (ReplyTable.name eq name)
         }.reversed().map(ReplyEntity::toModel)
     }
+    suspend fun deletereply(user: Reply): Unit = dbQuery {
+        println("replyDao")
+        println("deletereply")
+        ReplyEntity.find {
+            (ReplyTable.reply_content eq user.reply_content) and
+            (ReplyTable.course_name eq user.course_name) and
+                    (ReplyTable.name eq user.name) and
+                        (ReplyTable.content eq user.content) and
+                    (ReplyTable.reply_name eq user.reply_name)
 
+        }.forEach { it.delete() }
+    }
 }
 
 val replyDao = replyDaoImpl()
