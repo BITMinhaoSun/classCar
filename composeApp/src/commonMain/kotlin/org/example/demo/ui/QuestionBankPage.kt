@@ -107,9 +107,11 @@ fun QuestionBankPage(
                 var selectedLesson_id by remember { mutableStateOf(-1) }
                 //-1代表全部
                 var expandedLesson by remember { mutableStateOf(false) }
+                var buttonClicked by remember { mutableStateOf(false) }
                 var text by remember { mutableStateOf("") }
                 Column {
                     Text(text = "搜索题目: $text")
+                    Row() {
                     TextField(
                         value = text,
                         onValueChange = { newText ->
@@ -122,9 +124,15 @@ fun QuestionBankPage(
                                 println("检测到错误相关字符")
                             }
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.weight(0.8f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
                     )
+                        Button(onClick = {
+                            buttonClicked = true
+                        }) {
+                            Text("搜索")
+                        }
+                    }
 
 
                     //=============================================================================
@@ -161,7 +169,7 @@ fun QuestionBankPage(
                                 )
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
                     )
                     DropdownMenu(
                         expanded = expandedCourse,
@@ -263,8 +271,9 @@ fun QuestionBankPage(
                     //selectedLesson_id
                     //selectedCourse_id
                     LaunchedEffect(  selectedLesson_id,
-                        selectedCourse_id) {
+                        selectedCourse_id,buttonClicked) {
                         scope.launch {
+                            buttonClicked = false
                             questions.clear()
                             if(selectedCourse_id == -1){
                                 val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/all").body()
