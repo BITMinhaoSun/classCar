@@ -1,5 +1,8 @@
 package org.example.demo.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,16 +17,22 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 import androidx.navigation.NavController
 import demo.composeapp.generated.resources.Res
@@ -173,29 +182,112 @@ fun MyInfoPage(navController: NavController,name: String) {
                         }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "学校：$schoolName",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "姓名：$studentName",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "手机号：$phoneNumber",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = "邮箱：$e_mail",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
+//                Text(
+//                    text = "学校：$schoolName",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurface,
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                Text(
+//                    text = "姓名：$studentName",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurface,
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                Text(
+//                    text = "手机号：$phoneNumber",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurface,
+//                )
+//                Spacer(modifier = Modifier.height(12.dp))
+//                Text(
+//                    text = "邮箱：$e_mail",
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    color = MaterialTheme.colorScheme.onSurface,
+//                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .animateContentSize() // 内容大小变化时添加动画
+                ) {   var isVisible by remember { mutableStateOf(true) } // 控制显示与隐藏状态
+                    AnimatedVisibility(visible = isVisible) {
+                        Column {
+                            FloatingText(text = "早上好！$studentName")
+                            OutlinedTextField(
+                                value = "姓名：$studentName",
+                                onValueChange = {},
+                                readOnly = true,
+                                modifier = Modifier.padding(2.dp),
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                            )
+                   //         Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = "学校：$schoolName",
+                                onValueChange = {},
+                                readOnly = true,
+                                modifier = Modifier.padding(2.dp),
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                            )
+
+                            //==
+
+//                                Text(
+//                                    text = "学校：$schoolName",
+//                                    style = MaterialTheme.typography.bodyMedium,
+//                                    color = MaterialTheme.colorScheme.onSurface,
+//                                    modifier = Modifier.padding(4.dp)
+//                                )
+
+                   //         Spacer(modifier = Modifier.height(12.dp))
+//                            Text(
+//                                text = "姓名：$studentName",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onSurface,
+//                                modifier = Modifier.padding(4.dp)
+//                            )
+                    //        Spacer(modifier = Modifier.height(12.dp))
+                            OutlinedTextField(
+                                value = "手机号：$phoneNumber",
+                                onValueChange = {},
+                                readOnly = true,
+                                modifier = Modifier.padding(2.dp),
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                            )
+//                            Text(
+//                                text = "手机号：$phoneNumber",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onSurface,
+//                                modifier = Modifier.padding(4.dp)
+//                            )
+
+                        //    Spacer(modifier = Modifier.height(12.dp))
+//                            Text(
+//                                text = "邮箱：$e_mail",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onSurface,
+//                                modifier = Modifier.padding(4.dp)
+//                            )
+                            OutlinedTextField(
+                                value = "邮箱：$e_mail",
+                                onValueChange = {},
+                                readOnly = true,
+                                modifier = Modifier.padding(2.dp),
+                                textStyle = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // 按钮切换动画可见性
+                    Button(
+                        onClick = { isVisible = !isVisible },
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    ) {
+                        Text(text = if (isVisible) "隐藏信息" else "显示信息")
+                    }
+                }
             }
 
             LaunchedEffect(Unit) { search() }
@@ -204,3 +296,22 @@ fun MyInfoPage(navController: NavController,name: String) {
 
         }
     }
+
+@Composable
+fun FloatingText(text: String) {
+    val offsetX = remember { Animatable(0f) }
+
+    LaunchedEffect(Unit) {
+        offsetX.animateTo(-1000f, animationSpec = infiniteRepeatable(
+            animation = tween(60000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ))
+    }
+
+    Text(
+        text = text,
+        modifier = Modifier.offset(x = offsetX.value.dp),
+        color = Color.Black ,
+        style = androidx.compose.ui.text.TextStyle(fontSize = 30.sp)
+    )
+}

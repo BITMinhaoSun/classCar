@@ -111,6 +111,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.animation.desktop)
+    implementation(libs.androidx.material3.desktop)
     debugImplementation(compose.uiTooling)
 }
 
