@@ -14,12 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import demo.composeapp.generated.resources.Res
+import demo.composeapp.generated.resources.delete
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.example.demo.util.*
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 //
 //@OptIn(ExperimentalMaterialApi::class)
@@ -181,6 +184,13 @@ fun LessonList(
         }
     }
 
+    fun deleteLesson(lesson_id:Int) = scope.launch {
+        println("delete lesson $lesson_id")
+        client.delete("/lesson/delete/$lesson_id")
+        delay(100L)
+        search() // 删除后刷新列表
+    }
+
     Scaffold(
         floatingActionButton = {
             if (role == "teacher") {
@@ -206,6 +216,8 @@ fun LessonList(
                         id = lesson.lesson_id,
                         lessonName = lesson.name,
                         description = lesson.description,
+                        role =role,
+                        onDelete = { deleteLesson(lesson.lesson_id) },
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
                         },
@@ -223,6 +235,8 @@ fun LessonCard(
     navController: NavController,
     lessonName: String,
     id: Int,
+    role: String,
+    onDelete: () -> Unit,
     description: String,
     modifier: Modifier = Modifier
 ) {
@@ -231,11 +245,28 @@ fun LessonCard(
         println("Hello world,Im going to some Unkown Pages ")
         navController.navigate("lessonDetailPage/${id}/${lessonName}/${description}")
     }) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text( lessonName, style = MaterialTheme.typography.titleMedium)
-            Text(description, style = MaterialTheme.typography.bodyMedium)
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(lessonName, style = MaterialTheme.typography.titleMedium)
+                Text(description, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (role == "teacher") {
+                IconButton(
+                    onClick = {
+                    onDelete(
+
+                    )
+                    }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }

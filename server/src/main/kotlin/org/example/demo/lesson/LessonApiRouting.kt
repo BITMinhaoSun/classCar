@@ -1,9 +1,11 @@
 package org.example.demo.lesson
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.example.demo.chapter.chapterDao
 import org.example.demo.discuss.*
 
 
@@ -84,6 +86,24 @@ fun Application.lessonsRouting(){
                             id = 6 //实际这里用不到，因为id是自增的
                         )
                     )
+                }
+                delete("/delete/{lesson_id}") {
+                    val lesson_id = (call.parameters["lesson_id"])?.toInt()
+
+
+                    println("LessonApiRouting")
+                    println("delete lesson")
+                    println(lesson_id)
+
+                    try {
+                        // 调用挂起函数删除记录
+                        lesson_id?.let { lessonDao.deleteLesson(it) }
+
+                        call.respond(HttpStatusCode.OK, "Lesson deleted successfully")
+                    } catch (e: Exception) {
+                        // 捕获异常并返回错误信息
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete lesson: ${e.message}")
+                    }
                 }
             }
         }
