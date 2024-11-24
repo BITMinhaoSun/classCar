@@ -13,6 +13,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.upsert
 
 class QuestionsDaoImpl {
     suspend fun addQuestion(description: String, options: List<String>, answer: String, lessonId: Int): Int = dbQuery {
@@ -80,7 +81,7 @@ class QuestionsDaoImpl {
         question?.let { theQuestion ->
             if (theQuestion.released && !theQuestion.closed) {
                 if (answer in theQuestion.options) {
-                    StudentQuestionTable.insert {
+                    StudentQuestionTable.upsert {
                         it[this.question] = questionId
                         it[this.student] = StudentEntity.find { StudentTable.name eq student }.first().id
                         it[this.studentAnswer] = answer
