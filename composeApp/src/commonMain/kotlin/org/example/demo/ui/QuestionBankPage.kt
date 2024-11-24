@@ -370,7 +370,9 @@ fun QuestionBankPage(
                                     }
                                     delete_buttonClicked = true
                                 },
-                                Modifier.padding(5.dp).fillMaxWidth()
+                                Modifier.padding(5.dp).fillMaxWidth(),
+                                question.released,
+                                question.closed
                             )
                         }
                     }

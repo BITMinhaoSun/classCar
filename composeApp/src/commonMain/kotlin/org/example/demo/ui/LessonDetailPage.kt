@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -94,7 +95,9 @@ fun LessonDetailPage(
 
                             }
                         },
-                        Modifier.padding(5.dp).fillMaxWidth()
+                        Modifier.padding(5.dp).fillMaxWidth(),
+                        question.released,
+                        question.closed
                     )
                 }
             }
@@ -133,10 +136,15 @@ fun QuestionBriefCard(
     onClick: (Int) -> Unit,
     onDelete: (Int) -> Unit,
     modifier: Modifier,
+    released: Boolean,
+    closed: Boolean
 ) {
-    Card(modifier = modifier.clickable {
-        onClick(questionId)
-    }) {
+    Card(
+        modifier = modifier.clickable { onClick(questionId) },
+        colors = if (!released) CardDefaults.cardColors( containerColor = Color(0xffe8c6a5) )
+                    else if(!closed) CardDefaults.cardColors( containerColor = Color(0xffa5d3e8) )
+                    else CardDefaults.cardColors()
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
