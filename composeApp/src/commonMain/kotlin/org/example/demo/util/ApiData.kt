@@ -218,3 +218,11 @@ data class AnswerQuestionRequest(
     val questionId: Int,
     val answer: String,
 )
+@Serializable
+data class DeleteKeypointRequest(
+    val name: String,
+    val content: String,
+    val course_name: String,
+    val keypoint_content: String,
+    val keypoint_name: String,
+)

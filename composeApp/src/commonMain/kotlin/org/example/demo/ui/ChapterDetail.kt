@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import demo.composeapp.generated.resources.Res
 import demo.composeapp.generated.resources.avatar
 import demo.composeapp.generated.resources.back
+import demo.composeapp.generated.resources.delete
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -50,6 +51,7 @@ fun ChapterDetailPage(navController: NavController,
                       course_name: String,
                       name: String,
                       content: String,
+                      role:String,
                       keypoint_name:String
 ) {
     val keypoints = remember { mutableStateListOf<KeypointSearchResponse>() }
@@ -81,7 +83,28 @@ fun ChapterDetailPage(navController: NavController,
             keypoints.add(it)
         }
     }
-
+    fun deleteKeypoint(    name: String,
+                           content: String,
+                           course_name: String,
+                           keypoint_content: String,
+                           keypoint_name: String) = scope.launch {
+        println("delete keypoint $keypoint_content")
+        println("delete keypoint $keypoint_name")
+        client.post("/keypoint/delete"){
+            contentType(ContentType.Application.Json)
+            setBody(
+                DeleteKeypointRequest(
+                    name=name,
+                    content=content,
+                    course_name=course_name,
+                    keypoint_content=keypoint_content,
+                    keypoint_name=keypoint_name
+                )
+            )
+        }
+        delay(100L)
+        search() // 删除后刷新列表
+    }
     Scaffold(
         topBar = {
             IconButton(
@@ -113,6 +136,12 @@ fun ChapterDetailPage(navController: NavController,
                         navController,
                         name = keypoint.keypoint_name,
                         content = keypoint.keypoint_content,
+                        role =role,
+                        onDelete = { deleteKeypoint(name=keypoint.name,
+                            content=keypoint.content,
+                            course_name=keypoint.course_name,
+                            keypoint_content=keypoint.keypoint_content,
+                            keypoint_name=keypoint.keypoint_name) },
                         // content = reply.reply_content,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
                             print("")
@@ -130,17 +159,36 @@ fun KeypointCard(
     navController: NavController,
     content: String,
     name:  String,
+    role: String,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
 
     ) {
-        Column(
-            modifier = Modifier.padding(10.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text( name, style = MaterialTheme.typography.titleMedium)
-            Text(content, style = MaterialTheme.typography.bodyMedium)
+            Column(
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text(name, style = MaterialTheme.typography.titleMedium)
+                Text(content, style = MaterialTheme.typography.bodyMedium)
+            }
+            if (role == "teacher") {
+                IconButton(
+                    onClick = {
+                        onDelete(
+
+                        )
+                    }) {
+//                    println("1111111111")
+                    Icon(painterResource(Res.drawable.delete), "delete")
+                }
+            }
         }
     }
 }

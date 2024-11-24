@@ -99,7 +99,7 @@ fun App() {
                 val keypoint_name = backStackEntry.arguments?.getString("keypoint_name")!!
                 val name = backStackEntry.arguments?.getString("name")!!
                 val content = backStackEntry.arguments?.getString("content")!!
-                ChapterDetailPage(keypoint_name=keypoint_name,course_name=course_name,name=name,navController=navController,content=content) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+                ChapterDetailPage(keypoint_name=keypoint_name,course_name=course_name,name=name,navController=navController,content=content,role=role) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }
             composable("createkeypointPage/{course_name}/{name}/{content}/{keypoint_name}") {
                     backStackEntry ->
