@@ -72,7 +72,7 @@ fun App() {
                 val reply_name = backStackEntry.arguments?.getString("reply_name")!!
                 val name = backStackEntry.arguments?.getString("name")!!
                 val content = backStackEntry.arguments?.getString("content")!!
-                DiscussDetailPage(reply_name=reply_name,course_name=course_name,name=name,navController=navController,content=content) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
+                DiscussDetailPage(reply_name=reply_name,course_name=course_name,name=name,navController=navController,content=content,role=role) // CreateLessonPage 是一个 @Composable 函数，表示创建课程页面内容
             }
             composable("createReplyPage/{course_name}/{name}/{content}/{reply_name}") {
                     backStackEntry ->

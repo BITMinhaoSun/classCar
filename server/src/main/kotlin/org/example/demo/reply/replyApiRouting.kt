@@ -18,6 +18,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.flow.Flow
 import org.example.demo.course.CourseResponse
 import org.example.demo.course.CoursesRequest
+import org.example.demo.course.courseDao
 import org.example.demo.reply.replyDao
 
 fun Application.ReplyRouting() {
@@ -34,7 +35,7 @@ fun Application.ReplyRouting() {
                 ).map {
                     ReplySearchResponse(
                        course_name =  it.course_name,
-                        reply_name = it.reply_content,
+                        reply_name = it.reply_name,
                         name = it.name,
                         content = it.content,
                         reply_content=it.reply_content
@@ -53,6 +54,25 @@ fun Application.ReplyRouting() {
                         reply_name = req.reply_name
                     )
                 )
+            }
+            post("/delete") {
+
+
+                println("replyApiRouting")
+                println("delete reply")
+                val req = call.receive<ReplyDeleteRequest>()
+                replyDao.deletereply(
+                    Reply(
+                        course_name = req.course_name,
+                        name=req.name,
+                        content = req.content,
+                        reply_content = req.reply_content,
+                        reply_name = req.reply_name
+                    )
+                )
+                println(req.reply_content)
+                println(req.reply_name)
+
             }
         }
     }
