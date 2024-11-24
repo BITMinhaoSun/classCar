@@ -55,7 +55,7 @@ fun CreateStudentofCoursePage(
                         navController.popBackStack()
                     }
                 }) {
-                    Text("学生姓名")
+                    Text("拉取学生")
                 }
             },
             modifier = Modifier.fillMaxHeight().widthIn(max = 700.dp)
@@ -69,7 +69,7 @@ fun CreateStudentofCoursePage(
                         OutlinedTextField(
                             stu_name,
                             onValueChange = { stu_name = it },
-                            placeholder = { Text("拉取学生") },
+                            placeholder = { Text("学生姓名") },
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = Color.Transparent,
                                 unfocusedBorderColor = Color.Transparent,
