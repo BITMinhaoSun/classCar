@@ -136,7 +136,7 @@ fun StudentQuestionPage(
                             },
                             modifier = Modifier.padding(start = 20.dp, end = 20.dp)
                         ) {
-                            Text("查看答题统计")
+                            Text("提交答案")
                         }
                     } else {
                         Text("标准答案：${question.standardAnswer}")
