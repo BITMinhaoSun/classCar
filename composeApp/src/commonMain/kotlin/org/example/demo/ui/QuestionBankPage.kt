@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import io.ktor.client.call.*
 import kotlinx.coroutines.delay
@@ -157,6 +158,7 @@ fun QuestionBankPage(
                     OutlinedTextField(
                         value = selectedCourse,
                         onValueChange = { selectedCourse = it },
+                        enabled = false,
                         label = { Text("选择课程") },
                         trailingIcon = {
                             IconButton(onClick = {
@@ -170,7 +172,15 @@ fun QuestionBankPage(
                                 )
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().padding(top = 0.dp)
+                        modifier = Modifier.fillMaxWidth().padding(top = 0.dp).clickable {
+                            searchCourse()
+                            expandedCourse = true
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            disabledTextColor = Color.DarkGray,
+                            disabledLabelColor = Color.DarkGray,
+                            disabledTrailingIconColor = Color.DarkGray,
+                        )
                     )
                     DropdownMenu(
                         expanded = expandedCourse,
@@ -224,6 +234,7 @@ fun QuestionBankPage(
                         OutlinedTextField(
                             value = selectedLesson,
                             onValueChange = { selectedLesson = it },
+                            enabled = false,
                             label = { Text("选择课堂") },
                             trailingIcon = {
                                 IconButton(onClick = {
@@ -237,7 +248,15 @@ fun QuestionBankPage(
                                     )
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().clickable {
+                                expandedLesson = true
+                                searchLesson()
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = Color.DarkGray,
+                                disabledLabelColor = Color.DarkGray,
+                                disabledTrailingIconColor = Color.DarkGray,
+                            )
                         )
                         DropdownMenu(
                             expanded = expandedLesson,
