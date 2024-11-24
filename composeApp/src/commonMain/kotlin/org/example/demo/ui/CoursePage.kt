@@ -321,30 +321,28 @@ fun CourseCard(
         horizontalArrangement = Arrangement.SpaceBetween,
     ){
         Card(modifier = modifier) {
-            Column(
-                modifier = Modifier.padding(10.dp)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(courseName, style = MaterialTheme.typography.titleMedium)
-                Text("ID: $id", style = MaterialTheme.typography.bodySmall)
-                Text(teacherName, style = MaterialTheme.typography.bodyMedium)
-            }
-            if (role == "teacher") {
-                Column{
-                    IconButton(
-                        onClick = {
-                            onDelete(
-
-                            )
-                        }) {
-//                    println("1111111111")
-                        Icon(painterResource(Res.drawable.delete), "delete")
-                    }
-                    IconButton(onClick = { onChange() }) {
-//                    println("1111111111")
-                        Icon(painterResource(Res.drawable.change), "change")
+                Column(
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text(courseName, style = MaterialTheme.typography.titleMedium)
+                    Text("ID: $id", style = MaterialTheme.typography.bodySmall)
+                    Text(teacherName, style = MaterialTheme.typography.bodyMedium)
+                }
+                if (role == "teacher") {
+                    Column(
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        IconButton(onClick = { onDelete() }) {
+                            Icon(painterResource(Res.drawable.delete), "delete")
+                        }
+                        IconButton(onClick = { onChange() }) {
+                            Icon(painterResource(Res.drawable.change), "change")
+                        }
                     }
                 }
-
             }
         }
     }
