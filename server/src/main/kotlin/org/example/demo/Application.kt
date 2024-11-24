@@ -29,6 +29,8 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.example.demo.discuss.DiscussTable
 import org.example.demo.lesson.LessonEntity
+import org.example.demo.questions.QuestionEntity
+import org.example.demo.questions.questionRouting
 import org.example.demo.reply.ReplyEntity
 import org.example.demo.reply.ReplyRouting
 import org.example.demo.reply.ReplyTable
@@ -52,23 +54,40 @@ fun Application.module() {
         SchemaUtils.create(CourseTable)
         SchemaUtils.create(StudentCourseTable)
         SchemaUtils.create(LessonTable)
-   //     SchemaUtils.create(StudentLessonTable)
-        SchemaUtils.create(QuestionTable)
-
-        SchemaUtils.drop(DiscussTable)
         SchemaUtils.create(DiscussTable)
-        SchemaUtils.drop(ReplyTable)
         SchemaUtils.create(ReplyTable)
-//        SchemaUtils.drop(ChapterTable)
         SchemaUtils.create(ChapterTable)
-//        SchemaUtils.drop(KeypointTable)
         SchemaUtils.create(KeypointTable)
         SchemaUtils.create(FileDescriptionTable)
+        SchemaUtils.create(QuestionTable)
+        SchemaUtils.create(StudentQuestionTable)
+        TeacherEntity.new {
+            name = "111"
+            password = "111"
+        }
+        (1..20).forEach {
+            CourseEntity.new {
+                name = "课程$it"
+                description = "课程${it}的描述的描述的描述"
+                creator = "111"
+            }
+        }
         (1..20).forEach {
             LessonEntity.new {
                 description="$it"
                 name = "111"
                 course_id = 1
+            }
+        }
+        (1..10).forEach {
+            QuestionEntity.new {
+                this.description = "jsdkalfjaskdlffajielfwaiefjalsdfkj"
+                this.options = listOf("A","B","C")
+                this.answer = "A"
+                this.lesson = LessonEntity.findById(1)!!.id
+                this.course = CourseEntity.findById(LessonEntity.findById(1)!!.course_id)!!.id
+                this.released = false
+                this.closed = false
             }
         }
 //        (1..20).forEach {
@@ -133,4 +152,5 @@ fun Application.module() {
     ChapterRouting()
     KeypointRouting()
     fileRouting()
+    questionRouting()
 }

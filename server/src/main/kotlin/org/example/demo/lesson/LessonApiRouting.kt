@@ -66,6 +66,7 @@ fun Application.lessonsRouting(){
                             it.course_id,
                             it.name,
                             it.description,
+                            it.id
                         )
                     }
                     call.respond(courses)

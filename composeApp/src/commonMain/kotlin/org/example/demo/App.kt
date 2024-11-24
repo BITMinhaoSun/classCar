@@ -17,6 +17,7 @@ fun App() {
         val navController = rememberNavController()
         var role = ""
         var name = ""
+
         NavHost(
             navController = navController,
             startDestination = "starterPage"
@@ -51,10 +52,8 @@ fun App() {
             composable("createCoursePage") { CreateCoursePage(navController, name, role) }
             composable("myInfoPage") { MyInfoPage(navController) }
             composable("questionBankPage") { QuestionBankPage(navController) }
-            composable("classPage") { ClassPage(navController,name, role) }
-            composable("questionPage") { QuestionPage(navController,name, role) }
             composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
-            composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
+//            composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage/{course_id}") {
                     backStackEntry ->
                 val course_id = backStackEntry.arguments?.getString("course_id")!!.toInt()
@@ -118,22 +117,31 @@ fun App() {
                     backStackEntry ->
                 val course_id = backStackEntry.arguments?.getString("course_id")!!.toInt()
                 //  val course_id = backStackEntry.arguments?.getInt("course_id")!!
-                CreateStudentofCoursePage(navController,course_id=course_id,) }
-//            composable("createDiscussPage/{id}/{name}/{description}/{teacher}") {backStackEntry ->
-//                val id = backStackEntry.arguments?.getString("id")!!.toInt()
-//                val courseName = backStackEntry.arguments?.getString("name")!!
-//                val description = backStackEntry.arguments?.getString("description")!!
-//                val teacher = backStackEntry.arguments?.getString("teacher")!!
-//                DiscussDetailPage(
-//                    navController = navController,
-//                    id = id,
-//                    courseName = courseName,
-//                    description = description,
-//                    teacher = teacher,
-//                    name = name,
-//                    role = role
-//                )
-//            }
+                CreateStudentofCoursePage(navController,course_id=course_id,)
+            }
+            composable("lessonDetailPage/{lessonId}/{lessonName}/{lessonDescription}") { backStackEntry ->
+                val lessonId = backStackEntry.arguments?.getString("lessonId")!!.toInt()
+                val lessonName = backStackEntry.arguments?.getString("lessonName")!!
+                val lessonDescription = backStackEntry.arguments?.getString("lessonDescription")!!
+                LessonDetailPage(
+                    navController,
+                    lessonId,
+                    lessonName,
+                    lessonDescription,
+                    role,
+                    name
+                )
+            }
+            composable("createQuestionPage/{lessonId}") {backStackEntry ->
+                val lessonId = backStackEntry.arguments?.getString("lessonId")!!.toInt()
+                CreateQuestionPage(
+                    navController,
+                    lessonId,
+                    name,
+                    role
+                )
+            }
         }
+
     }
 }

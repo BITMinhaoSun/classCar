@@ -1,6 +1,7 @@
 package org.example.demo.questions
 
 import kotlinx.serialization.Serializable
+import org.example.demo.course.CourseTable
 import org.example.demo.lesson.Lesson
 import org.example.demo.lesson.LessonEntity
 import org.example.demo.lesson.LessonTable
@@ -18,36 +19,44 @@ import org.jetbrains.exposed.sql.Table
 @Serializable
 data class Question(
     val id: Int,
-    val topic: String,
+    val description: String,
+    val options: List<String>,
     val answer: String,
-    val creator: String,
-    val region: Int
+    val lessonId: Int,
+    val courseId: Int,
+    val released: Boolean,
+    val closed: Boolean,
 )
 
 object QuestionTable : IntIdTable() {
-    val topic = varchar("topic", 256)
-    val answer = varchar("answer", 64)
-    val creator = reference("creator", TeacherTable.name, onDelete = ReferenceOption.CASCADE).index()
-    val region = reference("region", LessonTable, onDelete = ReferenceOption.CASCADE).index()
+    val description = varchar("description", 1024)
+    val options = array<String>("options", 32)
+    val answer = varchar("answer", 16)
+    val lessonId = reference("lessonId", LessonTable, onDelete = ReferenceOption.CASCADE).index()
+    val courseId = reference("courseId", CourseTable, onDelete = ReferenceOption.CASCADE).index()
+    val released = bool("released")
+    val closed = bool("closed")
 }
 
 class QuestionEntity(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<QuestionEntity>(QuestionTable)
-    var topic by QuestionTable.topic
+    var description by QuestionTable.description
+    var options by QuestionTable.options
     var answer by QuestionTable.answer
-    var creator by QuestionTable.creator
-    var region by QuestionTable.region
+    var lesson by QuestionTable.lessonId
+    var course by QuestionTable.courseId
+    var released by QuestionTable.released
+    var closed by QuestionTable.closed
     var student by StudentEntity via StudentQuestionTable
     fun toModel() = Question(
-        id.value, topic, answer, creator, region.value
+        id.value, description, options, answer, lesson.value, course.value, released, closed
     )
 }
 
 object StudentQuestionTable : Table() {
     val student = reference("student", StudentTable, onDelete = ReferenceOption.CASCADE)
     val question = reference("question", QuestionTable, onDelete = ReferenceOption.CASCADE)
-    val std_answer = varchar("std_answer", 64)    //学生答案
-    val std_done = varchar("done", 64)   //是否写了题目，初始化为no，写了是yes
+    val studentAnswer = varchar("studentAnswer", 16)
     override val primaryKey = PrimaryKey(student, question)
 }
 

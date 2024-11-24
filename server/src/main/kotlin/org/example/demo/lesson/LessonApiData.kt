@@ -45,4 +45,5 @@ data class SearchLessonResponse(
     val course_id: Int ,
     val name: String,
     val description: String,
+    val lesson_id: Int,
 )

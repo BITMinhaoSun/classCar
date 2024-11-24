@@ -17,7 +17,7 @@ class FileDaoImpl {
         FileDescriptionEntity.findById(fileId)?.delete()
     }
 
-    suspend fun getFilesOfCourse(courseId: Int, from: Int, num: Int) = dbQuery {
+    suspend fun getFilesOfCourse(courseId: Int, from: Int, num: Int): List<FileDescription> = dbQuery {
         FileDescriptionEntity.find { FileDescriptionTable.courseId eq courseId }
             .reversed()
             .drop(from)

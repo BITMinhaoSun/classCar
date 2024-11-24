@@ -203,7 +203,7 @@ fun LessonList(
                 items(lessons) { lesson ->
                     LessonCard(
                         navController,
-                        id = id,
+                        id = lesson.lesson_id,
                         lessonName = lesson.name,
                         description = lesson.description,
                         modifier = Modifier.padding(5.dp).fillMaxWidth().clickable {
@@ -229,7 +229,7 @@ fun LessonCard(
     Card(modifier = modifier.clickable {
         // 在这里定义点击后的逻辑，此处仅示例打印日志
         println("Hello world,Im going to some Unkown Pages ")
-     //   navController.navigate("discussDetail/${courseName}/${name}/${content}/${replyName}")
+        navController.navigate("lessonDetailPage/${id}/${lessonName}/${description}")
     }) {
         Column(
             modifier = Modifier.padding(10.dp)

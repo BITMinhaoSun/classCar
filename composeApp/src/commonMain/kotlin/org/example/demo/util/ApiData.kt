@@ -41,40 +41,6 @@ data class JoinCourseRequest(
 )
 
 @Serializable
-data class LessonsResponse(
-    val id: Int,
-    val name: String,
-    val description: String,
-    val teacher: String
-)
-
-@Serializable
-data class LessonsRequest(
-    val name: String,
-)
-
-@Serializable
-data class LQuestionResponse(
-    val name: String,
-    val img: String,
-)
-
-@Serializable
-data class LQuestionRequest(
-    val name: String,
-)
-
-@Serializable
-data class QuestionResponse(
-    val name: String,
-    val img: String,
-)
-
-@Serializable
-data class QuestionRequest(
-    val name: String,
-)
-@Serializable
 data class DiscussResponse(
     val course_name: String,
     val name: String,
@@ -191,6 +157,7 @@ data class SearchLessonResponse(
     val course_id: Int ,
     val name: String,
     val description: String,
+    val lesson_id: Int,
 )
 
 @Serializable
@@ -201,4 +168,24 @@ data class StudentofCoursesRequest(
 @Serializable
 data class StudentofCourseResponse(
     val name:String,
+)
+
+@Serializable
+data class QuestionsResponse(
+    val id: Int,
+    val description: String,
+    val options: List<String>,
+    val answer: String,
+    val lessonId: Int,
+    val courseId: Int,
+    val released: Boolean,
+    val closed: Boolean,
+)
+
+@Serializable
+data class AddQuestionRequest(
+    val description: String,
+    val options: List<String>,
+    val answer: String,
+    val lessonId: Int,
 )
