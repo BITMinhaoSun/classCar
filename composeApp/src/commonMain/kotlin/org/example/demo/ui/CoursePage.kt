@@ -34,12 +34,16 @@ import org.example.demo.getPlatform
 import org.example.demo.util.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import qrscanner.CameraLens
+import qrscanner.OverlayShape
+import qrscanner.QrScanner
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 @Preview
 fun CoursePage(navController: NavController, name: String, role: String) {
     var showDialog by remember { mutableStateOf(false) }
+    var scanQr by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -80,17 +84,29 @@ fun CoursePage(navController: NavController, name: String, role: String) {
             }
         },
         floatingActionButton = {
-            Button(onClick = {
-                when (role) {
-                    "teacher" -> {navController.navigate("createCoursePage")}
-                    "student" -> {showDialog = true}
+            when (role) {
+                "teacher" -> {
+                    Button(onClick = {
+                        navController.navigate("createCoursePage")
+                    }) {
+                        Text("+ 创建课程")
+                    }
                 }
-            }) {
-                when (role) {
-                    "teacher" -> { Text("+ 创建课程") }
-                    "student" -> { Text("+ 加入课程") }
+                "student" -> {
+                    Column {
+                        Button(onClick = {
+                            showDialog = true
+                        }) {
+                            Text("+ 输入课程代码加入课程")
+                        }
+                        Button(onClick = {
+                            scanQr = true
+                        }) {
+                            Icon(painterResource(Res.drawable.qr_code), "qr_code")
+                            Text("  扫描二维码加入课程")
+                        }
+                    }
                 }
-
             }
         }
     ) {
@@ -182,6 +198,58 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                                 joinCourseId = intValue
                             }
                         }
+                    )
+                }
+            )
+        }
+
+        var openImagePicker by remember { mutableStateOf(value = false) }
+        if (scanQr) {
+            AlertDialog(
+                onDismissRequest = {
+                    scanQr = false
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        openImagePicker = true
+                    }) {
+                        Text("从图库中选择")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        scanQr = false
+                    }) {
+                        Text("取消")
+                    }
+                },
+                title = {
+                    Text("扫描二维码加入课程")
+                },
+                text = {
+                    QrScanner(
+                        modifier = Modifier,
+                        flashlightOn = false,
+                        cameraLens = CameraLens.Back,
+                        openImagePicker = openImagePicker,
+                        onCompletion = {
+                            scope.launch {
+                                client.post("/student/course/join") {
+                                    contentType(ContentType.Application.Json)
+                                    setBody(JoinCourseRequest(name, it.toInt()))
+                                }
+//                            delay(200L)
+                                scanQr = false
+                                refresh()
+                            }
+                        },
+                        imagePickerHandler = {
+                            openImagePicker = it
+                        },
+                        onFailure = {
+                            println(it)
+                        },
+                        overlayShape = OverlayShape.Square
                     )
                 }
             )

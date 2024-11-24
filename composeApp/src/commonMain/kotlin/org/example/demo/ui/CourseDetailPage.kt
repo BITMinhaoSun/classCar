@@ -1,13 +1,7 @@
 package org.example.demo.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import demo.composeapp.generated.resources.Res
 import demo.composeapp.generated.resources.back
+import demo.composeapp.generated.resources.qr_code
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -28,7 +23,8 @@ import org.example.demo.ui.component.*
 import org.example.demo.util.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-@OptIn(ExperimentalMaterialApi::class)
+import qrgenerator.qrkitpainter.rememberQrKitPainter
+
 @Composable
 @Preview
 fun CourseDetailPage(
@@ -44,6 +40,41 @@ fun CourseDetailPage(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+
+        var showQrCode by remember { mutableStateOf(false) }
+        if (showQrCode) {
+            AlertDialog(
+                onDismissRequest = {
+                    showQrCode = false
+                },
+                confirmButton = {
+                },
+                dismissButton = {
+                    Button(onClick = {
+                        showQrCode = false
+                    }) {
+                        Text("关闭")
+                    }
+                },
+                title = {
+                    Text("扫码加入课程")
+                },
+                text = {
+                    val painter = rememberQrKitPainter(data = id.toString())
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Image(
+                            painter = painter,
+                            contentDescription = null,
+                            alignment = Alignment.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            )
+        }
         Scaffold(
             topBar = {
                 IconButton(
@@ -66,7 +97,18 @@ fun CourseDetailPage(
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(5.dp)
                     )
-                    Text("课程码：$id", modifier = Modifier.padding(5.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("课程码：$id", modifier = Modifier.padding(5.dp))
+                        Spacer(modifier = Modifier.width(20.dp))
+                        IconButton(onClick = {
+                            showQrCode = true
+                        }) {
+                            Icon(painterResource(Res.drawable.qr_code), "qr_code")
+                        }
+                        Text("显示二维码", color = Color.Gray)
+                    }
                     Text("教师：$teacher", modifier = Modifier.padding(5.dp))
                     Text(description, modifier = Modifier.padding(5.dp))
                     TabRow(

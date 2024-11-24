@@ -71,6 +71,8 @@ kotlin {
             implementation("io.github.vinceglb:filekit-core:0.8.7")
             // Enables FileKit with Composable utilities
             implementation("io.github.vinceglb:filekit-compose:0.8.7")
+
+            implementation("network.chaintech:qr-kit:3.0.3")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -111,8 +113,8 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.animation.desktop)
-    implementation(libs.androidx.material3.desktop)
+//    implementation(libs.androidx.animation.desktop)
+//    implementation(libs.androidx.material3.desktop)
     debugImplementation(compose.uiTooling)
 }
 
