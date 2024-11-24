@@ -255,6 +255,12 @@ data class AnswerQuestionRequest(
     val questionId: Int,
     val answer: String,
 )
+
+@Serializable
+data class QuestionStatisticsResponse(
+    val option: String,
+    val number: Int
+)
 @Serializable
 data class DeleteKeypointRequest(
     val name: String,

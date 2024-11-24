@@ -79,7 +79,15 @@ fun Application.questionRouting() {
                 val questionId = call.parameters["questionId"]!!.toInt()
                 questionDao.closeQuestion(questionId)
             }
-
+            get("/question/statistics/{questionId}") {
+                val questionId = call.parameters["questionId"]!!.toInt()
+                val stat = questionDao.getStatisticOfSingleQuestion(questionId)
+                val options = questionDao.getSingleQuestion(questionId).options
+                val res = options.map {
+                    QuestionStatisticsResponse(it, stat.getOrDefault(it, 0))
+                }
+                call.respond(res)
+            }
         }
         route("/student") {
             get("/questions/{lessonId}") {
