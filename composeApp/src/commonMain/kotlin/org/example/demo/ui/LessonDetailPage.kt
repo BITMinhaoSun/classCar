@@ -19,6 +19,8 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.example.demo.getPlatform
 import org.example.demo.util.QuestionsResponse
 import org.example.demo.util.client
@@ -72,7 +74,15 @@ fun LessonDetailPage(
                         it.id,
                         it.description,
                         role,
-                        onClick = {/*TODO*/},
+                        onClick = { _ ->
+                            if (role == "teacher") {
+                                val questionJson = Json.encodeToString(it)
+                                navController.navigate("teacherQuestionPage/${questionJson}")
+                            }
+                            if (role == "student") {
+                                navController.navigate("studentQuestionPage/${it.id}")
+                            }
+                        },
                         onDelete = {/*TODO*/},
                         Modifier.padding(5.dp).fillMaxWidth()
                     )

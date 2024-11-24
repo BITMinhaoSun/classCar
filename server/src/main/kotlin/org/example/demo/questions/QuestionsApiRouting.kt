@@ -4,12 +4,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.delay
-import org.example.demo.course.CourseRequest
-import org.example.demo.course.CourseResponse
-import org.example.demo.course.CoursesRequest
-import org.example.demo.course.JoinCourseRequest
-import org.example.demo.course.courseDao
 
 fun Application.questionRouting() {
     routing {
@@ -70,6 +64,14 @@ fun Application.questionRouting() {
                 }
                 call.respond(questions)
             }
+            post("/question/release/{questionId}") {
+                val questionId = call.parameters["questionId"]!!.toInt()
+                questionDao.releaseQuestion(questionId)
+            }
+            post("/question/close/{questionId}") {
+                val questionId = call.parameters["questionId"]!!.toInt()
+                questionDao.closeQuestion(questionId)
+            }
 
         }
         route("/student") {
@@ -80,7 +82,7 @@ fun Application.questionRouting() {
                         id = it.id,
                         description = it.description,
                         options = it.options,
-                        answer = "",
+                        answer = if (!it.closed) "" else it.answer,
                         lessonId = it.lessonId,
                         courseId = it.courseId,
                         released = it.released,
@@ -88,6 +90,28 @@ fun Application.questionRouting() {
                     )
                 }
                 call.respond(questions)
+            }
+            get("/question/detail/{questionId}/{studentName}") {
+                val questionId = call.parameters["questionId"]!!.toInt()
+                val studentName = call.parameters["studentName"]!!
+                val question = questionDao.getSingleQuestion(questionId)
+                val answer = questionDao.getStudentAnswer(questionId, studentName)
+                val res = StudentQuestionDetailResponse(
+                    id = question.id,
+                    description = question.description,
+                    options = question.options,
+                    standardAnswer = if (!question.closed) "" else question.answer,
+                    myAnswer = answer?:"",
+                    lessonId = question.lessonId,
+                    courseId = question.courseId,
+                    released = question.released,
+                    closed = question.closed
+                )
+                call.respond(res)
+            }
+            post("/question/answer") {
+                val req = call.receive<AnswerQuestionRequest>()
+                questionDao.answerQuestion(req.questionId, req.student, req.answer)
             }
             get("/questionsBank/{courseId}") {
                 val courseId = call.parameters["courseId"]!!.toInt()

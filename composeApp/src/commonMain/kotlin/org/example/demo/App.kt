@@ -8,7 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.example.demo.ui.*
+import org.example.demo.util.QuestionsResponse
 
 @Composable
 @Preview
@@ -52,7 +54,7 @@ fun App() {
             composable("createCoursePage") { CreateCoursePage(navController, name, role) }
             composable("myInfoPage") { MyInfoPage(navController) }
             composable("questionBankPage") { QuestionBankPage(name,role,navController) }
-            composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
+//            composable("answerstatisticsPage") { AnswerStatisticsPage(navController) }
 //            composable("createquestionPage") { CreateQuestionPage(navController,name,role) }
             composable("createlessonPage/{course_id}") {
                     backStackEntry ->
@@ -141,7 +143,32 @@ fun App() {
                     role
                 )
             }
+            composable("teacherQuestionPage/{question}") {backStackEntry ->
+                val questionJson = backStackEntry.arguments?.getString("question")!!
+                val question = Json.decodeFromString<QuestionsResponse>(questionJson)
+                TeacherQuestionPage(
+                    navController = navController,
+                    questionId = question.id,
+                    description = question.description,
+                    options = question.options,
+                    answer = question.answer,
+                    lessonId = question.lessonId,
+                    courseId = question.courseId,
+                    questionReleased = question.released,
+                    questionClosed = question.closed,
+                    name = name,
+                    role = role,
+                )
+            }
+            composable("studentQuestionPage/{questionId}") {backStackEntry ->
+                val questionId = backStackEntry.arguments?.getString("questionId")!!.toInt()
+                StudentQuestionPage(
+                    navController,
+                    questionId,
+                    name,
+                    role
+                )
+            }
         }
-
     }
 }

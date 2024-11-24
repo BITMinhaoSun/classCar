@@ -61,10 +61,11 @@ fun Application.module() {
         SchemaUtils.create(FileDescriptionTable)
         SchemaUtils.create(QuestionTable)
         SchemaUtils.create(StudentQuestionTable)
-//        TeacherEntity.new {
-//            name = "111"
-//            password = "111"
-//        }
+        /*
+        TeacherEntity.new {
+            name = "111"
+            password = "111"
+        }
         (1..20).forEach {
             CourseEntity.new {
                 name = "课程$it"
@@ -90,6 +91,7 @@ fun Application.module() {
                 this.closed = false
             }
         }
+        */
 //        (1..20).forEach {
 //            ReplyEntity.new {
 //                course_name="aaa"
