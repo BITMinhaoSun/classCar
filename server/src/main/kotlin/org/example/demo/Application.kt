@@ -121,12 +121,15 @@ fun Application.module() {
 //            }
 //        }
 
-        InfoEntity.new {
-            school="bit"
-            name = "111"
-            e_mail="1120212442@bit.edu.cn"
-            avatar=1
-            phone_number="110"
+        val count = InfoEntity.find { InfoTable.name eq "111" }.count()
+        if (count == 0L) {
+            InfoEntity.new {
+                school = "bit"
+                name = "111"
+                e_mail = "1120212442@bit.edu.cn"
+                avatar = 1
+                phone_number = "110"
+            }
         }
 
 //        (1..20).forEach {
