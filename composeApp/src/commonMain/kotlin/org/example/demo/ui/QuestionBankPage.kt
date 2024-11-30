@@ -151,15 +151,17 @@ fun QuestionBankPage(
                     fun searchCourse() = scope.launch {
                         //  selectedCourse_id = -1
 
-                        val result: List<CourseResponse> = client.post("/$role/courses/0") {
-                            contentType(ContentType.Application.Json)
-                            setBody(CoursesRequest(name))
-                        }.body()
-                        courses.clear()
-                        delay(100L)
-                        result.forEach {
-                            courses.add(it)
-                        }
+                        try {
+                            val result: List<CourseResponse> = client.post("/$role/courses/0") {
+                                contentType(ContentType.Application.Json)
+                                setBody(CoursesRequest(name))
+                            }.body()
+                            courses.clear()
+                            delay(100L)
+                            result.forEach {
+                                courses.add(it)
+                            }
+                        } catch (_: Exception) { }
                     }
                     OutlinedTextField(
                         value = selectedCourse,
@@ -219,15 +221,17 @@ fun QuestionBankPage(
                     //===========================================上面是课程的
 
                     fun searchLesson() = scope.launch {
-                        val result: List<SearchLessonResponse> = client.post("/lesson/search") {
-                            contentType(ContentType.Application.Json)
-                            setBody(SearchLessonRequest(selectedCourse_id))
-                        }.body()
-                        lessons.clear()
-                        delay(100L)
-                        result.forEach {
-                            lessons.add(it)
-                        }
+                        try {
+                            val result: List<SearchLessonResponse> = client.post("/lesson/search") {
+                                contentType(ContentType.Application.Json)
+                                setBody(SearchLessonRequest(selectedCourse_id))
+                            }.body()
+                            lessons.clear()
+                            delay(100L)
+                            result.forEach {
+                                lessons.add(it)
+                            }
+                        } catch (_: Exception) { }
                     }
                     LaunchedEffect(selectedCourse_id) {
                         scope.launch {
@@ -304,39 +308,48 @@ fun QuestionBankPage(
 
                             questions.clear()
                             if(selectedCourse_id == -1){
-                                val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/all").body()
-                                questions.clear()
-                                result0.forEach {question ->
-                                if(question.description.contains(text)){
-                                    questions.add(question)
-                                }
-                                }
+                                try {
+                                    val result0: List<QuestionsResponse> =
+                                        client.get("/${role}/questionsBank/all").body()
+                                    questions.clear()
+                                    result0.forEach { question ->
+                                        if (question.description.contains(text)) {
+                                            questions.add(question)
+                                        }
+                                    }
+                                } catch (_: Exception) { }
                             }
                             if(selectedCourse_id != -1
                                 && selectedLesson_id == -1){
-                                val result0: List<QuestionsResponse> = client.get("/${role}/questionsBank/$selectedCourse_id").body()
-                                questions.clear()
+                                try {
+                                    val result0: List<QuestionsResponse> =
+                                        client.get("/${role}/questionsBank/$selectedCourse_id").body()
+                                    questions.clear()
 //                                result0.forEach {
 //                                    questions.add(it)
 //                                }
-                                result0.forEach {question ->
-                                    if(question.description.contains(text)){
-                                        questions.add(question)
+                                    result0.forEach { question ->
+                                        if (question.description.contains(text)) {
+                                            questions.add(question)
+                                        }
                                     }
-                                }
+                                } catch (_: Exception) { }
                             }
                             if(selectedCourse_id != -1
                                 && selectedLesson_id != -1){
-                                val result0: List<QuestionsResponse> = client.get("/${role}/questions/$selectedLesson_id").body()
-                                questions.clear()
+                                try {
+                                    val result0: List<QuestionsResponse> =
+                                        client.get("/${role}/questions/$selectedLesson_id").body()
+                                    questions.clear()
 //                                result0.forEach {
 //                                    questions.add(it)
 //                                }
-                                result0.forEach {question ->
-                                    if(question.description.contains(text)){
-                                        questions.add(question)
+                                    result0.forEach { question ->
+                                        if (question.description.contains(text)) {
+                                            questions.add(question)
+                                        }
                                     }
-                                }
+                                } catch (_: Exception) { }
                             }
                         }
                     }
@@ -377,8 +390,9 @@ fun QuestionBankPage(
                                     println("=======================")
                                     println("Request Body: ${DeleteQuestionRequest(question.id)}")
                                     scope.launch {
-                                        client.post("/teacher/question/delete/${question.id}")
-
+                                        try {
+                                            client.post("/teacher/question/delete/${question.id}")
+                                        } catch (_: Exception) { }
                                     }
                                     delete_buttonClicked = true
                                 },

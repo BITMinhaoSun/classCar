@@ -121,10 +121,18 @@ fun CreateLessonPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/lesson/add") {
-                            contentType(ContentType.Application.Json)
-                            setBody(AddLessonRequest(course_id =course_id , description=description, name=courseName))
-                        }
+                        try {
+                            client.post("/lesson/add") {
+                                contentType(ContentType.Application.Json)
+                                setBody(
+                                    AddLessonRequest(
+                                        course_id = course_id,
+                                        description = description,
+                                        name = courseName
+                                    )
+                                )
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

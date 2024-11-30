@@ -58,46 +58,52 @@ fun DiscussDetailPage(navController: NavController,
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<ReplySearchResponse> = client.post("/reply/search") {
-            contentType(ContentType.Application.Json)
-            setBody(ReplySearchRequest(
-                content = content,
-                name = name,
-                course_name = course_name,
-            ))
+        try {
+            val result: List<ReplySearchResponse> = client.post("/reply/search") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    ReplySearchRequest(
+                        content = content,
+                        name = name,
+                        course_name = course_name,
+                    )
+                )
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (reply in result) {
-                println("course_nam: ${reply.course_name}")
-                println("discuss_name: ${reply.name}")
-                println("discuss_content: ${reply.content}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (reply in result) {
+                    println("course_nam: ${reply.course_name}")
+                    println("discuss_name: ${reply.name}")
+                    println("discuss_content: ${reply.content}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何讨论内容")
             }
-        } else {
-            println("未查询到任何讨论内容")
-        }
-        replies.clear()
-        delay(100L)
-        result.forEach {
-            replies.add(it)
-        }
+            replies.clear()
+            delay(100L)
+            result.forEach {
+                replies.add(it)
+            }
+        } catch (_: Exception) { }
     }
     fun deleteReply(name:String,content:String,course_name:String,reply_content:String,reply_name:String) = scope.launch {
         println("delete reply $reply_content")
         println("delete reply $reply_name")
-        client.post("/reply/delete"){
-            contentType(ContentType.Application.Json)
-            setBody(
-                ReplyDeleteRequest(
-                    course_name = course_name,
-                    name = name,
-                    reply_content = reply_content,
-                    content = content,
-                    reply_name= reply_name,
+        try {
+            client.post("/reply/delete") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    ReplyDeleteRequest(
+                        course_name = course_name,
+                        name = name,
+                        reply_content = reply_content,
+                        content = content,
+                        reply_name = reply_name,
+                    )
                 )
-            )
-        }
+            }
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

@@ -11,100 +11,132 @@ fun Application.courseRouting() {
     routing {
         route("/course"){
             post("/delete_course/{id}") {
-                val course_id = (call.parameters["id"])?.toInt()
-
-
-                println("CourseApiRouting")
-                println("delete course")
-                println(course_id)
-
                 try {
-                    // 调用挂起函数删除记录
-                    course_id?.let { courseDao.deleteCourse(it) }
+                    val course_id = (call.parameters["id"])?.toInt()
 
-                    call.respond(HttpStatusCode.OK, "Course deleted successfully")
-                } catch (e: Exception) {
-                    // 捕获异常并返回错误信息
-                    call.respond(HttpStatusCode.InternalServerError, "Failed to delete course: ${e.message}")
+
+                    println("CourseApiRouting")
+                    println("delete course")
+                    println(course_id)
+
+                    try {
+                        // 调用挂起函数删除记录
+                        course_id?.let { courseDao.deleteCourse(it) }
+
+                        call.respond(HttpStatusCode.OK, "Course deleted successfully")
+                    } catch (e: Exception) {
+                        // 捕获异常并返回错误信息
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete course: ${e.message}")
+                    }
+                } catch (_: Exception) {
+
                 }
             }
         }
         route("/teacher") {
             post("/courses/{num}") {
-                val req =  call.receive<CoursesRequest>()
-                val courses = courseDao.getCoursesOfTeacher(req.name, call.parameters["num"]!!.toInt(), 10).map {
-                    CourseResponse(
-                        it.id,
-                        it.name,
-                        it.description,
-                        it.creator
-                    )
+                try {
+                    val req = call.receive<CoursesRequest>()
+                    val courses = courseDao.getCoursesOfTeacher(req.name, call.parameters["num"]!!.toInt(), 10).map {
+                        CourseResponse(
+                            it.id,
+                            it.name,
+                            it.description,
+                            it.creator
+                        )
+                    }
+                    call.respond(courses)
+                } catch (_: Exception) {
+
                 }
-                call.respond(courses)
             }
             post("/course/create") {
-                val req = call.receive<CourseRequest>()
-                courseDao.createCourse(
-                    req.name,
-                    req.description,
-                    req.teacher
-                )
+                try {
+                    val req = call.receive<CourseRequest>()
+                    courseDao.createCourse(
+                        req.name,
+                        req.description,
+                        req.teacher
+                    )
+                } catch (_: Exception) {
+
+                }
             }
             post("/course/change") {
-                val req = call.receive<CourseChange>()
-                courseDao.changeCourse(
-                    req.course_name,
-                    req.courseDescription,
-                    req.id
-                )
+                try {
+                    val req = call.receive<CourseChange>()
+                    courseDao.changeCourse(
+                        req.course_name,
+                        req.courseDescription,
+                        req.id
+                    )
+                } catch (_: Exception) {
+
+                }
             }
             post("/studentofcourse") {
-                val req =  call.receive<StudentofCoursesRequest>()
-                val courses = courseDao.getStudentsOfCourse(
-                    req.course_id,
-                    //call.parameters["num"]!!.toInt(), 10
+                try {
+                    val req = call.receive<StudentofCoursesRequest>()
+                    val courses = courseDao.getStudentsOfCourse(
+                        req.course_id,
+                        //call.parameters["num"]!!.toInt(), 10
                     ).map {
-                    StudentofCourseResponse(
-                        it.name,
-                    )
+                        StudentofCourseResponse(
+                            it.name,
+                        )
+                    }
+                    call.respond(courses)
+                } catch (_: Exception) {
+
                 }
-                call.respond(courses)
             }
         }
         route("/student") {
             post("/courses/{num}") {
-                val req =  call.receive<CoursesRequest>()
-                val courses = courseDao.getCoursesOfStudent(req.name, call.parameters["num"]!!.toInt(), 10).map {
-                    CourseResponse(
-                        it.id,
-                        it.name,
-                        it.description,
-                        it.creator
-                    )
+                try {
+                    val req = call.receive<CoursesRequest>()
+                    val courses = courseDao.getCoursesOfStudent(req.name, call.parameters["num"]!!.toInt(), 10).map {
+                        CourseResponse(
+                            it.id,
+                            it.name,
+                            it.description,
+                            it.creator
+                        )
+                    }
+                    call.respond(courses)
+                } catch (_: Exception) {
+
                 }
-                call.respond(courses)
             }
             post("/course/join") {
-                val req = call.receive<JoinCourseRequest>()
-                courseDao.joinCourse(req.student, req.course)
+                try {
+                    val req = call.receive<JoinCourseRequest>()
+                    courseDao.joinCourse(req.student, req.course)
+                } catch (_: Exception) {
+
+                }
             }
             delete("/delete/{courseId}/{studentName}") {
-                val course_id = (call.parameters["courseId"])?.toInt()
-                val student_name = call.parameters["studentName"]
-
-                println("CourseApiRouting")
-                println("delete course")
-                println(course_id)
-                println(student_name)
-
                 try {
-                    // 调用挂起函数删除记录
-                    course_id?.let { student_name?.let { it1 -> courseDao.deleteStudent(it, it1) } }
+                    val course_id = (call.parameters["courseId"])?.toInt()
+                    val student_name = call.parameters["studentName"]
 
-                    call.respond(HttpStatusCode.OK, "Student deleted successfully")
-                } catch (e: Exception) {
-                    // 捕获异常并返回错误信息
-                    call.respond(HttpStatusCode.InternalServerError, "Failed to delete student: ${e.message}")
+                    println("CourseApiRouting")
+                    println("delete course")
+                    println(course_id)
+                    println(student_name)
+
+                    try {
+                        // 调用挂起函数删除记录
+                        course_id?.let { student_name?.let { it1 -> courseDao.deleteStudent(it, it1) } }
+
+                        call.respond(HttpStatusCode.OK, "Student deleted successfully")
+                    } catch (e: Exception) {
+                        // 捕获异常并返回错误信息
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete student: ${e.message}")
+                    }
+                } catch (_: Exception) {
+
                 }
             }
 

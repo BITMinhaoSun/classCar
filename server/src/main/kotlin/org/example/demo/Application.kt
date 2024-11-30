@@ -38,7 +38,7 @@ fun main() {
     embeddedServer(
         Netty,
         port = SERVER_PORT,
-        host = "10.62.175.136",
+        host = "172.20.233.16",
         module = Application::module
     ).start(wait = true)
 }
@@ -121,13 +121,13 @@ fun Application.module() {
 //            }
 //        }
 
-//            InfoEntity.new {
-//                school="bit"
-//                name = "111"
-//                e_mail="1120212442@bit.edu.cn"
-//                avatar=1
-//                phone_number="110"
-//            }
+        InfoEntity.new {
+            school="bit"
+            name = "111"
+            e_mail="1120212442@bit.edu.cn"
+            avatar=1
+            phone_number="110"
+        }
 
 //        (1..20).forEach {
 //            ChapterEntity.new {

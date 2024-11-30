@@ -61,12 +61,14 @@ fun FileList(
         }
         refreshing = true
         initialized = false
-        val result: List<FileDescriptionResponse> = client.get("/file/description/${id}/0").body()
-        files.clear()
-        delay(100L)
-        result.forEach {
-            files.add(it)
-        }
+        try {
+            val result: List<FileDescriptionResponse> = client.get("/file/description/${id}/0").body()
+            files.clear()
+            delay(100L)
+            result.forEach {
+                files.add(it)
+            }
+        } catch (_: Exception) { }
         refreshing = false
         initialized = true
     }
@@ -77,10 +79,12 @@ fun FileList(
                 return@launch
             }
             loading = true
-            val result: List<FileDescriptionResponse> = client.get("/file/description/${id}/${files.size}").body()
-            result.forEach {
-                files.add(it)
-            }
+            try {
+                val result: List<FileDescriptionResponse> = client.get("/file/description/${id}/${files.size}").body()
+                result.forEach {
+                    files.add(it)
+                }
+            } catch (_: Exception) { }
             loading = false
         }
     }
@@ -93,14 +97,18 @@ fun FileList(
         it?.let {
             scope.launch {
                 refreshing = true
-                client.post("/file/upload/${id}") {
-                    contentType(ContentType.Application.Json)
-                    setBody(UploadFileRequest(
-                        it.baseName,
-                        it.extension,
-                        it.readBytes()
-                    ))
-                }
+                try {
+                    client.post("/file/upload/${id}") {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            UploadFileRequest(
+                                it.baseName,
+                                it.extension,
+                                it.readBytes()
+                            )
+                        )
+                    }
+                } catch (_: Exception) { }
                 refreshing = false
                 delay(100L)
                 refresh()
@@ -156,19 +164,23 @@ fun FileList(
                         onClick = {
                             scope.launch {
                                 refreshing = true
-                                val downloadFile: DownloadFileResponse = client.get("/file/download/${it}").body()
-                                fileSaver.launch(
-                                    bytes = downloadFile.file,
-                                    baseName = file.baseName,
-                                    extension = file.extension,
-                                    initialDirectory = directory?.path
-                                )
+                                try {
+                                    val downloadFile: DownloadFileResponse = client.get("/file/download/${it}").body()
+                                    fileSaver.launch(
+                                        bytes = downloadFile.file,
+                                        baseName = file.baseName,
+                                        extension = file.extension,
+                                        initialDirectory = directory?.path
+                                    )
+                                } catch (_: Exception) { }
                                 refreshing = false
                             }
                         },
                         onDelete = {
                             scope.launch {
-                                client.delete("/file/delete/${it}")
+                                try {
+                                    client.delete("/file/delete/${it}")
+                                } catch (_: Exception) { }
                                 delay(100L)
                                 refresh()
                             }

@@ -53,10 +53,12 @@ fun CreateChapterPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/chapter/add") {
-                            contentType(ContentType.Application.Json)
-                            setBody(ChapterAddRequest(course_name,chaptername,content))
-                        }
+                        try {
+                            client.post("/chapter/add") {
+                                contentType(ContentType.Application.Json)
+                                setBody(ChapterAddRequest(course_name, chaptername, content))
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

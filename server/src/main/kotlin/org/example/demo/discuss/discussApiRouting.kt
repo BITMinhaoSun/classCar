@@ -22,51 +22,66 @@ fun Application.DiscussRouting() {
         ///discuss/search
         route("/discuss") {
             post("/search") {
-                val req =  call.receive<SearchRequest>()
-                val courses = discussDao.getdiscuss(
-                    req.course_name
-                ).map {
-                   SearchResponse(
-                       it.course_name,
-                        it.name,
-                        it.content,
-                    )
+                try {
+                    val req = call.receive<SearchRequest>()
+                    val courses = discussDao.getdiscuss(
+                        req.course_name
+                    ).map {
+                        SearchResponse(
+                            it.course_name,
+                            it.name,
+                            it.content,
+                        )
+                    }
+                    call.respond(courses)
+                } catch (_: Exception) {
+
                 }
-                call.respond(courses)
             }
             post("/add") {
-                    val req = call.receive<AddRequest>()
-                    discussDao.adddiscuss(
-                        Discuss(
-                        course_name = req.course_name,
-                        name = req.name,
-                        content = req.content
-                    )
-                    )
-                }
-            delete("/delete/{discussName}/{courseName}/{discussContent}") {
-                val courseName = call.parameters["courseName"]
-                val discussName = call.parameters["discussName"]
-                val discussContent = call.parameters["discussContent"]
-                println("DiscussApiRouting")
-                println("delete discuss")
-                println(courseName)
-                println(discussName)
-                if (courseName.isNullOrBlank() || discussName.isNullOrBlank() || discussContent.isNullOrBlank()) {
-                    call.respond(HttpStatusCode.BadRequest, "Invalid parameters: courseName and discussName must be provided")
-                    return@delete
-                }
+               try {
+                   val req = call.receive<AddRequest>()
+                   discussDao.adddiscuss(
+                       Discuss(
+                           course_name = req.course_name,
+                           name = req.name,
+                           content = req.content
+                       )
+                   )
+               } catch (_: Exception) {
 
-                try {
-                    // 调用挂起函数删除记录
-                    discussDao.deleteDiscuss(courseName, discussName,discussContent)
-
-                    call.respond(HttpStatusCode.OK, "Discuss deleted successfully")
-                } catch (e: Exception) {
-                    // 捕获异常并返回错误信息
-                    call.respond(HttpStatusCode.InternalServerError, "Failed to delete discuss: ${e.message}")
-                }
+               }
             }
+            delete("/delete/{discussName}/{courseName}/{discussContent}") {
+                try {
+                    val courseName = call.parameters["courseName"]
+                    val discussName = call.parameters["discussName"]
+                    val discussContent = call.parameters["discussContent"]
+                    println("DiscussApiRouting")
+                    println("delete discuss")
+                    println(courseName)
+                    println(discussName)
+                    if (courseName.isNullOrBlank() || discussName.isNullOrBlank() || discussContent.isNullOrBlank()) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Invalid parameters: courseName and discussName must be provided"
+                        )
+                        return@delete
+                    }
+
+                    try {
+                        // 调用挂起函数删除记录
+                        discussDao.deleteDiscuss(courseName, discussName, discussContent)
+
+                        call.respond(HttpStatusCode.OK, "Discuss deleted successfully")
+                    } catch (e: Exception) {
+                        // 捕获异常并返回错误信息
+                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete discuss: ${e.message}")
+                    }
+                } catch (_: Exception) {
+
+                }
             }
         }
     }
+}

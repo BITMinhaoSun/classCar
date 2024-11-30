@@ -26,52 +26,64 @@ fun Application.ReplyRouting() {
         ///Reply/search
         route("/reply") {
             post("/search") {
-                println("------------------------------------------------------------")
-                val req =  call.receive<ReplySearchRequest>()
-                val courses = replyDao.getreply(
-                    name = req.name,
-                    content = req.content,
-                    course_name =req.course_name,
-                ).map {
-                    ReplySearchResponse(
-                       course_name =  it.course_name,
-                        reply_name = it.reply_name,
-                        name = it.name,
-                        content = it.content,
-                        reply_content=it.reply_content
-                    )
+                try {
+                    println("------------------------------------------------------------")
+                    val req = call.receive<ReplySearchRequest>()
+                    val courses = replyDao.getreply(
+                        name = req.name,
+                        content = req.content,
+                        course_name = req.course_name,
+                    ).map {
+                        ReplySearchResponse(
+                            course_name = it.course_name,
+                            reply_name = it.reply_name,
+                            name = it.name,
+                            content = it.content,
+                            reply_content = it.reply_content
+                        )
+                    }
+                    call.respond(courses)
+                } catch (_: Exception) {
+
                 }
-                call.respond(courses)
             }
             post("/add") {
-                val req = call.receive<ReplyAddRequest>()
-                replyDao.addreply(
-                    Reply(
-                        course_name = req.course_name,
-                        name=req.name,
-                        content = req.content,
-                        reply_content = req.reply_content,
-                        reply_name = req.reply_name
+                try {
+                    val req = call.receive<ReplyAddRequest>()
+                    replyDao.addreply(
+                        Reply(
+                            course_name = req.course_name,
+                            name = req.name,
+                            content = req.content,
+                            reply_content = req.reply_content,
+                            reply_name = req.reply_name
+                        )
                     )
-                )
+                } catch (_: Exception) {
+
+                }
             }
             post("/delete") {
 
 
-                println("replyApiRouting")
-                println("delete reply")
-                val req = call.receive<ReplyDeleteRequest>()
-                replyDao.deletereply(
-                    Reply(
-                        course_name = req.course_name,
-                        name=req.name,
-                        content = req.content,
-                        reply_content = req.reply_content,
-                        reply_name = req.reply_name
+                try {
+                    println("replyApiRouting")
+                    println("delete reply")
+                    val req = call.receive<ReplyDeleteRequest>()
+                    replyDao.deletereply(
+                        Reply(
+                            course_name = req.course_name,
+                            name = req.name,
+                            content = req.content,
+                            reply_content = req.reply_content,
+                            reply_name = req.reply_name
+                        )
                     )
-                )
-                println(req.reply_content)
-                println(req.reply_name)
+                    println(req.reply_content)
+                    println(req.reply_name)
+                } catch (_: Exception) {
+
+                }
 
             }
         }

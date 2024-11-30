@@ -123,15 +123,17 @@ fun CoursePage(navController: NavController, name: String, role: String) {
             }
             refreshing = true
             initialized = false
-            val result: List<CourseResponse> = client.post("/$role/courses/0") {
-                contentType(ContentType.Application.Json)
-                setBody(CoursesRequest(name))
-            }.body()
-            courses.clear()
-            delay(100L)
-            result.forEach {
-                courses.add(it)
-            }
+            try {
+                val result: List<CourseResponse> = client.post("/$role/courses/0") {
+                    contentType(ContentType.Application.Json)
+                    setBody(CoursesRequest(name))
+                }.body()
+                courses.clear()
+                delay(100L)
+                result.forEach {
+                    courses.add(it)
+                }
+            } catch (_: Exception) { }
             refreshing = false
             initialized = true
         }
@@ -142,13 +144,15 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                     return@launch
                 }
                 loading = true
-                val result: List<CourseResponse> = client.post("/$role/courses/${courses.size}"){
-                    contentType(ContentType.Application.Json)
-                    setBody(CoursesRequest(name))
-                }.body()
-                result.forEach {
-                    courses.add(it)
-                }
+                try {
+                    val result: List<CourseResponse> = client.post("/$role/courses/${courses.size}") {
+                        contentType(ContentType.Application.Json)
+                        setBody(CoursesRequest(name))
+                    }.body()
+                    result.forEach {
+                        courses.add(it)
+                    }
+                } catch (_: Exception) { }
                 loading = false
             }
         }
@@ -167,10 +171,12 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                 confirmButton = {
                     Button(onClick = {
                         scope.launch {
-                            client.post("/student/course/join") {
-                                contentType(ContentType.Application.Json)
-                                setBody(JoinCourseRequest(name, joinCourseId))
-                            }
+                            try {
+                                client.post("/student/course/join") {
+                                    contentType(ContentType.Application.Json)
+                                    setBody(JoinCourseRequest(name, joinCourseId))
+                                }
+                            } catch (_: Exception) { }
 //                            delay(200L)
                             showDialog = false
                             refresh()
@@ -234,10 +240,12 @@ fun CoursePage(navController: NavController, name: String, role: String) {
                         openImagePicker = openImagePicker,
                         onCompletion = {
                             scope.launch {
-                                client.post("/student/course/join") {
-                                    contentType(ContentType.Application.Json)
-                                    setBody(JoinCourseRequest(name, it.toInt()))
-                                }
+                                try {
+                                    client.post("/student/course/join") {
+                                        contentType(ContentType.Application.Json)
+                                        setBody(JoinCourseRequest(name, it.toInt()))
+                                    }
+                                } catch (_: Exception) { }
 //                            delay(200L)
                                 scanQr = false
                                 refresh()
@@ -256,7 +264,9 @@ fun CoursePage(navController: NavController, name: String, role: String) {
         }
         fun deleteCourse(id:Int) = scope.launch {
             println("delete course $id")
-            client.post("/course/delete_course/$id")
+            try {
+                client.post("/course/delete_course/$id")
+            } catch (_: Exception) { }
             delay(100L)
             refresh() // 删除后刷新列表
         }

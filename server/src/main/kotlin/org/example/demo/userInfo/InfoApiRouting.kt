@@ -13,37 +13,45 @@ fun Application.InfoRouting() {
         ///Info/search
         route("/userInfo") {
             post("/search") {
-                val req =  call.receive<SearchInfoRequest>()
-                println("=============================================")
-                println("Info/search")
-                println("=============================================")
-                val name = InfoDao.getInfo(
-                    req.name
-                ).map {
-                    SearchInfoResponse(
-                        name = it.name,
-                        school = it.school,
-                        e_mail = it.e_mail,
-                        phone_number =it.phone_number,
-                        avatar =it.avatar,
-                    )
+                try {
+                    val req = call.receive<SearchInfoRequest>()
+                    println("=============================================")
+                    println("Info/search")
+                    println("=============================================")
+                    val name = InfoDao.getInfo(
+                        req.name
+                    ).map {
+                        SearchInfoResponse(
+                            name = it.name,
+                            school = it.school,
+                            e_mail = it.e_mail,
+                            phone_number = it.phone_number,
+                            avatar = it.avatar,
+                        )
+                    }
+                    call.respond(name)
+                } catch (_: Exception) {
+
                 }
-                call.respond(name)
             }
         }
         route("/userInfo") {
             post("/update") {
-                val req =  call.receive<UpdateInfoRequest>()
-                println("=============================================")
-                println("Info/update")
-                println("=============================================")
-                InfoDao.updateInfo(
-                    name = req.name,
-                    school =  req.school,
-                    phone_number = req.phone_number,
-                    e_mail = req.e_mail,
-                    avatar = req.avatar,
-                )
+                try {
+                    val req = call.receive<UpdateInfoRequest>()
+                    println("=============================================")
+                    println("Info/update")
+                    println("=============================================")
+                    InfoDao.updateInfo(
+                        name = req.name,
+                        school = req.school,
+                        phone_number = req.phone_number,
+                        e_mail = req.e_mail,
+                        avatar = req.avatar,
+                    )
+                } catch (_: Exception) {
+
+                }
             }
         }
     }

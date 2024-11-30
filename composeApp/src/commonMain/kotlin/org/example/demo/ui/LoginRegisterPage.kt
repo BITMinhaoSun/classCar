@@ -50,16 +50,18 @@ fun LoginPage(
     var loggingIn by remember { mutableStateOf(false) }
     fun login() = scope.launch {
         loggingIn = true
-        val result = client.post("/$role/login") {
-            contentType(ContentType.Application.Json)
-            setBody(LoginRequest(name, password))
-        }
-        scope.launch { snackbarHostState.showSnackbar(result.bodyAsText(), duration = SnackbarDuration.Short) }
-        // 如果登录成功
-        if (result.status == HttpStatusCode.OK) {
-            onLogin(name)
-            navController.navigate("coursePage")
-        }
+        try {
+            val result = client.post("/$role/login") {
+                contentType(ContentType.Application.Json)
+                setBody(LoginRequest(name, password))
+            }
+            scope.launch { snackbarHostState.showSnackbar(result.bodyAsText(), duration = SnackbarDuration.Short) }
+            // 如果登录成功
+            if (result.status == HttpStatusCode.OK) {
+                onLogin(name)
+                navController.navigate("coursePage")
+            }
+        } catch (_: Exception) { }
         loggingIn = false
     }
     val loginState = rememberPullRefreshState(refreshing = loggingIn, onRefresh = ::login)
@@ -138,15 +140,17 @@ fun RegisterPage(
     var registering by remember { mutableStateOf(false) }
     fun register() = scope.launch {
         registering = true
-        val result = client.post("/$role/register") {
-            contentType(ContentType.Application.Json)
-            setBody(RegisterRequest(name, password))
-        }
-        scope.launch { snackbarHostState.showSnackbar(result.bodyAsText(), duration = SnackbarDuration.Short) }
-        // 如果注册成功
-        if (result.status == HttpStatusCode.OK) {
-            navController.popBackStack()
-        }
+        try {
+            val result = client.post("/$role/register") {
+                contentType(ContentType.Application.Json)
+                setBody(RegisterRequest(name, password))
+            }
+            scope.launch { snackbarHostState.showSnackbar(result.bodyAsText(), duration = SnackbarDuration.Short) }
+            // 如果注册成功
+            if (result.status == HttpStatusCode.OK) {
+                navController.popBackStack()
+            }
+        } catch (_: Exception) { }
         registering = false
     }
     val registerState = rememberPullRefreshState(refreshing = registering, onRefresh = ::register)

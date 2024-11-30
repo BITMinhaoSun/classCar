@@ -143,23 +143,25 @@ fun MyInfoPage(navController: NavController,name: String) {
             val infos = remember { mutableStateListOf<SearchInfoResponse>() }
             val scope = rememberCoroutineScope()
             fun search() = scope.launch {
-                val result: List<SearchInfoResponse> = client.post("/userInfo/search") {
-                    contentType(ContentType.Application.Json)
-                    setBody(SearchInfoRequest(name))
-                }.body()
-                infos.clear()
-                delay(100L)
-                result.forEach {
-                    infos.add(it)
-                    println("添加信息: ${it.name}")
-                    schoolName =it.school
-                    studentName = it.name
-                 //   name = it.name
-                    phoneNumber = it.phone_number
-                    e_mail = it.e_mail
-               //     selectedAvatarResource by remember { mutableStateOf(Res.drawable.avatar) } // 当前选中的头像资源
-                    selectedAvatarResource = avatarOptions.elementAtOrNull(it.avatar)?: Res.drawable.avatar
-                }
+                try {
+                    val result: List<SearchInfoResponse> = client.post("/userInfo/search") {
+                        contentType(ContentType.Application.Json)
+                        setBody(SearchInfoRequest(name))
+                    }.body()
+                    infos.clear()
+                    delay(100L)
+                    result.forEach {
+                        infos.add(it)
+                        println("添加信息: ${it.name}")
+                        schoolName = it.school
+                        studentName = it.name
+                        //   name = it.name
+                        phoneNumber = it.phone_number
+                        e_mail = it.e_mail
+                        //     selectedAvatarResource by remember { mutableStateOf(Res.drawable.avatar) } // 当前选中的头像资源
+                        selectedAvatarResource = avatarOptions.elementAtOrNull(it.avatar) ?: Res.drawable.avatar
+                    }
+                } catch (_: Exception) { }
             }
 
             Column(

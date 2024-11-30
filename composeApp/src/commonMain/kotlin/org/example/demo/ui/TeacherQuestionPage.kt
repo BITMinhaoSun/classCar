@@ -187,7 +187,9 @@ fun TeacherQuestionPage(
                             Button(
                                 onClick = {
                                     scope.launch {
-                                        client.post("/teacher/question/close/${questionId}")
+                                        try {
+                                            client.post("/teacher/question/close/${questionId}")
+                                        } catch (_: Exception) { }
                                     }
                                     closed = true
                                 },
@@ -200,7 +202,9 @@ fun TeacherQuestionPage(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    client.post("/teacher/question/release/${questionId}")
+                                    try {
+                                        client.post("/teacher/question/release/${questionId}")
+                                    } catch (_: Exception) { }
                                 }
                                 released = true
                             },

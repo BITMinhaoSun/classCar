@@ -41,29 +41,33 @@ fun StudentList(
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<StudentofCourseResponse> = client.post("/teacher/studentofcourse") {
-            contentType(ContentType.Application.Json)
-            setBody(StudentofCoursesRequest(id))
+        try {
+            val result: List<StudentofCourseResponse> = client.post("/teacher/studentofcourse") {
+                contentType(ContentType.Application.Json)
+                setBody(StudentofCoursesRequest(id))
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (stu in result) {
-                println("学生: ${stu.name}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (stu in result) {
+                    println("学生: ${stu.name}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何学生")
             }
-        } else {
-            println("未查询到任何学生")
-        }
-        students.clear()
-        delay(100L)
-        result.forEach {
-            students.add(it)
-        }
+            students.clear()
+            delay(100L)
+            result.forEach {
+                students.add(it)
+            }
+        } catch (_: Exception) { }
     }
     fun deleteStudent(courseId: Int,studentName:String) = scope.launch {
         println("delete student $courseId")
         println(studentName)
-        client.delete("/student/delete/$courseId/$studentName")
+        try {
+            client.delete("/student/delete/$courseId/$studentName")
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

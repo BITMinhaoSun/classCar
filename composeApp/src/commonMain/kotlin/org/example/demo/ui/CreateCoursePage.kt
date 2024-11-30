@@ -45,10 +45,12 @@ fun CreateCoursePage(
             bottomBar = {
                 Button(onClick = {
                     scope.launch {
-                        client.post("/teacher/course/create") {
-                            contentType(ContentType.Application.Json)
-                            setBody(CourseRequest(courseName, description, name))
-                        }
+                        try {
+                            client.post("/teacher/course/create") {
+                                contentType(ContentType.Application.Json)
+                                setBody(CourseRequest(courseName, description, name))
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

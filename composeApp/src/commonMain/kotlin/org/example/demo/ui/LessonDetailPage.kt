@@ -98,8 +98,9 @@ fun LessonDetailPage(
                             println("=======================")
                             println("Request Body: ${DeleteQuestionRequest(question.id)}")
                             scope.launch {
-                                client.post("/teacher/question/delete/${question.id}")
-
+                                try {
+                                    client.post("/teacher/question/delete/${question.id}")
+                                } catch (_: Exception) { }
                             }
                         },
                         Modifier.padding(5.dp).fillMaxWidth(),
@@ -111,23 +112,27 @@ fun LessonDetailPage(
         }
         LaunchedEffect(Unit) {
             scope.launch {
-                val result0: List<QuestionsResponse> = client.get("/${role}/questions/${lessonId}").body()
-                questions.clear()
-                result0.forEach {
-                    questions.add(it)
-                }
+                try {
+                    val result0: List<QuestionsResponse> = client.get("/${role}/questions/${lessonId}").body()
+                    questions.clear()
+                    result0.forEach {
+                        questions.add(it)
+                    }
+                } catch (_: Exception) { }
 
                 if (role == "student") {
                     while (true) {
                         delay(2000L)
-                        val result: List<QuestionsResponse> = client.get("/${role}/questions/${lessonId}").body()
-                        if (result.size > questions.size) {
-                            questions.clear()
-                            result.forEach {
-                                questions.add(it)
+                        try {
+                            val result: List<QuestionsResponse> = client.get("/${role}/questions/${lessonId}").body()
+                            if (result.size > questions.size) {
+                                questions.clear()
+                                result.forEach {
+                                    questions.add(it)
+                                }
+                                snackbarHostState.showSnackbar("有新的题目")
                             }
-                            snackbarHostState.showSnackbar("有新的题目")
-                        }
+                        } catch (_: Exception) { }
                     }
                 }
             }

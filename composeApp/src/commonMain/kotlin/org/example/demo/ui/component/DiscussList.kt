@@ -41,31 +41,35 @@ fun DiscussList(
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<DiscussResponse> = client.post("/discuss/search") {
-            contentType(ContentType.Application.Json)
-            setBody(DiscussRequest(courseName))
+        try {
+            val result: List<DiscussResponse> = client.post("/discuss/search") {
+                contentType(ContentType.Application.Json)
+                setBody(DiscussRequest(courseName))
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (discuss in result) {
-                println("讨论课程: ${discuss.course_name}")
-                println("讨论名称: ${discuss.name}")
-                println("讨论内容: ${discuss.content}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (discuss in result) {
+                    println("讨论课程: ${discuss.course_name}")
+                    println("讨论名称: ${discuss.name}")
+                    println("讨论内容: ${discuss.content}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何讨论内容")
             }
-        } else {
-            println("未查询到任何讨论内容")
-        }
-        discusses.clear()
-        delay(100L)
-        result.forEach {
-            discusses.add(it)
-        }
+            discusses.clear()
+            delay(100L)
+            result.forEach {
+                discusses.add(it)
+            }
+        } catch (_: Exception) { }
     }
     fun deleteDiscuss(discussName: String,discussContent:String) = scope.launch {
-        println("delete discuss $discussName")
-        println(discussContent)
-        client.delete("/discuss/delete/$discussName/$courseName/$discussContent")
+            println("delete discuss $discussName")
+            println(discussContent)
+        try {
+            client.delete("/discuss/delete/$discussName/$courseName/$discussContent")
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

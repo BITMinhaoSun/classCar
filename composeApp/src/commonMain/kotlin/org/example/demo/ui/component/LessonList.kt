@@ -162,31 +162,35 @@ fun LessonList(
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<SearchLessonResponse> = client.post("/lesson/search") {
-            contentType(ContentType.Application.Json)
-            setBody(SearchLessonRequest(id))
+        try {
+            val result: List<SearchLessonResponse> = client.post("/lesson/search") {
+                contentType(ContentType.Application.Json)
+                setBody(SearchLessonRequest(id))
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (discuss in result) {
-                println("讨论课程: ${discuss.course_id}")
-                println("讨论名称: ${discuss.name}")
-                println("讨论内容: ${discuss.description}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (discuss in result) {
+                    println("讨论课程: ${discuss.course_id}")
+                    println("讨论名称: ${discuss.name}")
+                    println("讨论内容: ${discuss.description}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何课堂内容")
             }
-        } else {
-            println("未查询到任何课堂内容")
-        }
-        lessons.clear()
-        delay(100L)
-        result.forEach {
-            lessons.add(it)
-        }
+            lessons.clear()
+            delay(100L)
+            result.forEach {
+                lessons.add(it)
+            }
+        } catch (_: Exception) { }
     }
 
     fun deleteLesson(lesson_id:Int) = scope.launch {
         println("delete lesson $lesson_id")
-        client.delete("/lesson/delete/$lesson_id")
+        try {
+            client.delete("/lesson/delete/$lesson_id")
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

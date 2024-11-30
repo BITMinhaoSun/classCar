@@ -48,10 +48,12 @@ fun CreateDiscussPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/discuss/add") {
-                            contentType(ContentType.Application.Json)
-                            setBody(DiscussAddRequest(course_name,name,content))
-                        }
+                        try {
+                            client.post("/discuss/add") {
+                                contentType(ContentType.Application.Json)
+                                setBody(DiscussAddRequest(course_name, name, content))
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

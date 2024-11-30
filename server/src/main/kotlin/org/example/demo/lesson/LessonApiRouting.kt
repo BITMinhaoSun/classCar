@@ -57,52 +57,64 @@ fun Application.lessonsRouting(){
             ///discuss/search
             route("/lesson") {
                 post("/search") {
-                    println("*-*-*-*-*-*-*")
-                    println("code there /lesson/search")
-                    println("*-*-*-*-*-*-*")
-                    val req =  call.receive<SearchLessonRequest>()
-                    val courses = lessonDao.getLessonViaCrouseId(
-                        req.course_id
-                    ).map {
-                        SearchLessonResponse(
-                            it.course_id,
-                            it.name,
-                            it.description,
-                            it.id
-                        )
+                    try {
+                        println("*-*-*-*-*-*-*")
+                        println("code there /lesson/search")
+                        println("*-*-*-*-*-*-*")
+                        val req = call.receive<SearchLessonRequest>()
+                        val courses = lessonDao.getLessonViaCrouseId(
+                            req.course_id
+                        ).map {
+                            SearchLessonResponse(
+                                it.course_id,
+                                it.name,
+                                it.description,
+                                it.id
+                            )
+                        }
+                        call.respond(courses)
+                    } catch (_: Exception) {
+
                     }
-                    call.respond(courses)
                 }
                 post("/add") {
-                    println("*-*-*-*-*-*-*")
-                    println("code there /lesson/add")
-                    println("*-*-*-*-*-*-*")
-                    val req = call.receive<AddLessonRequest>()
-                    lessonDao.addLesson(
-                        Lesson(
-                            course_id = req.course_id,
-                            name = req.name,
-                            description = req.description,
-                            id = 6 //实际这里用不到，因为id是自增的
+                    try {
+                        println("*-*-*-*-*-*-*")
+                        println("code there /lesson/add")
+                        println("*-*-*-*-*-*-*")
+                        val req = call.receive<AddLessonRequest>()
+                        lessonDao.addLesson(
+                            Lesson(
+                                course_id = req.course_id,
+                                name = req.name,
+                                description = req.description,
+                                id = 6 //实际这里用不到，因为id是自增的
+                            )
                         )
-                    )
+                    } catch (_: Exception) {
+
+                    }
                 }
                 delete("/delete/{lesson_id}") {
-                    val lesson_id = (call.parameters["lesson_id"])?.toInt()
-
-
-                    println("LessonApiRouting")
-                    println("delete lesson")
-                    println(lesson_id)
-
                     try {
-                        // 调用挂起函数删除记录
-                        lesson_id?.let { lessonDao.deleteLesson(it) }
+                        val lesson_id = (call.parameters["lesson_id"])?.toInt()
 
-                        call.respond(HttpStatusCode.OK, "Lesson deleted successfully")
-                    } catch (e: Exception) {
-                        // 捕获异常并返回错误信息
-                        call.respond(HttpStatusCode.InternalServerError, "Failed to delete lesson: ${e.message}")
+
+                        println("LessonApiRouting")
+                        println("delete lesson")
+                        println(lesson_id)
+
+                        try {
+                            // 调用挂起函数删除记录
+                            lesson_id?.let { lessonDao.deleteLesson(it) }
+
+                            call.respond(HttpStatusCode.OK, "Lesson deleted successfully")
+                        } catch (e: Exception) {
+                            // 捕获异常并返回错误信息
+                            call.respond(HttpStatusCode.InternalServerError, "Failed to delete lesson: ${e.message}")
+                        }
+                    } catch (_: Exception) {
+
                     }
                 }
             }

@@ -58,30 +58,34 @@ fun ChapterDetailPage(navController: NavController,
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<KeypointSearchResponse> = client.post("/keypoint/search") {
-            contentType(ContentType.Application.Json)
-            setBody(KeypointSearchRequest(
-                content = content,
-                name = name,
-                course_name = course_name,
-            ))
+        try {
+            val result: List<KeypointSearchResponse> = client.post("/keypoint/search") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    KeypointSearchRequest(
+                        content = content,
+                        name = name,
+                        course_name = course_name,
+                    )
+                )
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (keypoint in result) {
-                println("课程名称: ${keypoint.course_name}")
-                println("知识点名称: ${keypoint.keypoint_name}")
-                println("知识点内容: ${keypoint.keypoint_content}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (keypoint in result) {
+                    println("课程名称: ${keypoint.course_name}")
+                    println("知识点名称: ${keypoint.keypoint_name}")
+                    println("知识点内容: ${keypoint.keypoint_content}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何讨论内容")
             }
-        } else {
-            println("未查询到任何讨论内容")
-        }
-        keypoints.clear()
-        delay(100L)
-        result.forEach {
-            keypoints.add(it)
-        }
+            keypoints.clear()
+            delay(100L)
+            result.forEach {
+                keypoints.add(it)
+            }
+        } catch (_: Exception) { }
     }
     fun deleteKeypoint(    name: String,
                            content: String,
@@ -90,18 +94,20 @@ fun ChapterDetailPage(navController: NavController,
                            keypoint_name: String) = scope.launch {
         println("delete keypoint $keypoint_content")
         println("delete keypoint $keypoint_name")
-        client.post("/keypoint/delete"){
-            contentType(ContentType.Application.Json)
-            setBody(
-                DeleteKeypointRequest(
-                    name=name,
-                    content=content,
-                    course_name=course_name,
-                    keypoint_content=keypoint_content,
-                    keypoint_name=keypoint_name
+        try {
+            client.post("/keypoint/delete") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    DeleteKeypointRequest(
+                        name = name,
+                        content = content,
+                        course_name = course_name,
+                        keypoint_content = keypoint_content,
+                        keypoint_name = keypoint_name
+                    )
                 )
-            )
-        }
+            }
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

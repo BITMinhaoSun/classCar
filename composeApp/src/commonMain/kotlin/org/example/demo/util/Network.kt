@@ -8,6 +8,6 @@ import io.ktor.serialization.kotlinx.json.*
 val client = HttpClient {
     install(ContentNegotiation) { json() }
     defaultRequest {
-        url("http://10.62.175.136:8080")
+        url("http://39.107.236.25:8080")
     }
 }

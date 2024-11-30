@@ -40,7 +40,9 @@ fun StudentQuestionPage(
     var answer by remember { mutableStateOf("") }
 
     fun refresh() = scope.launch {
-        question = client.get("/student/question/detail/${questionId}/${name}").body()
+        try {
+            question = client.get("/student/question/detail/${questionId}/${name}").body()
+        } catch (_: Exception) { }
         println("stdAns: ${question.standardAnswer}")
     }
 
@@ -121,16 +123,18 @@ fun StudentQuestionPage(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    client.post("/student/question/answer") {
-                                        contentType(ContentType.Application.Json)
-                                        setBody(
-                                            AnswerQuestionRequest(
-                                                name,
-                                                question.id,
-                                                answer
+                                    try {
+                                        client.post("/student/question/answer") {
+                                            contentType(ContentType.Application.Json)
+                                            setBody(
+                                                AnswerQuestionRequest(
+                                                    name,
+                                                    question.id,
+                                                    answer
+                                                )
                                             )
-                                        )
-                                    }
+                                        }
+                                    } catch (_: Exception) { }
                                     navController.popBackStack()
                                 }
                             },

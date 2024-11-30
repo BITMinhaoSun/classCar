@@ -52,10 +52,12 @@ fun ChangeCoursePage(
             bottomBar = {
                 Button(onClick = {
                     scope.launch {
-                        client.post("/teacher/course/change") {
-                            contentType(ContentType.Application.Json)
-                            setBody(CourseChange(courseName, description, id))
-                        }
+                        try {
+                            client.post("/teacher/course/change") {
+                                contentType(ContentType.Application.Json)
+                                setBody(CourseChange(courseName, description, id))
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

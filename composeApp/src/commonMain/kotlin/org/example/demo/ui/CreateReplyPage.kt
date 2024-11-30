@@ -52,18 +52,20 @@ fun CreateReplyPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/reply/add") {
-                            contentType(ContentType.Application.Json)
-                            setBody(
-                                ReplyAddRequest(
-                                    course_name = course_name,
-                                    name = name,
-                                    reply_content = reply_content,
-                                    content = content,
-                                    reply_name= reply_name,
+                        try {
+                            client.post("/reply/add") {
+                                contentType(ContentType.Application.Json)
+                                setBody(
+                                    ReplyAddRequest(
+                                        course_name = course_name,
+                                        name = name,
+                                        reply_content = reply_content,
+                                        content = content,
+                                        reply_name = reply_name,
+                                    )
                                 )
-                            )
-                        }
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

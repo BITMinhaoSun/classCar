@@ -50,10 +50,12 @@ fun UpdateInfoPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/userInfo/update") {
-                            contentType(ContentType.Application.Json)
-                            setBody(UpdateInfoRequest(name,school,phoneNumber,e_mail,avatar))
-                        }
+                        try {
+                            client.post("/userInfo/update") {
+                                contentType(ContentType.Application.Json)
+                                setBody(UpdateInfoRequest(name, school, phoneNumber, e_mail, avatar))
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

@@ -41,30 +41,34 @@ fun ChapterList(
     val scope = rememberCoroutineScope()
     fun search() = scope.launch {
 
-        val result: List<ChapterResponse> = client.post("/chapter/search") {
-            contentType(ContentType.Application.Json)
-            setBody(ChapterRequest(courseName))
+        try {
+            val result: List<ChapterResponse> = client.post("/chapter/search") {
+                contentType(ContentType.Application.Json)
+                setBody(ChapterRequest(courseName))
 
-        }.body()
-        if (result!= null && result.isNotEmpty()) {
-            for (chapter in result) {
-                println("课程名称: ${chapter.course_name}")
-                println("章节名称: ${chapter.name}")
-                println("章节内容: ${chapter.content}")
-                println("------------------------")
+            }.body()
+            if (result != null && result.isNotEmpty()) {
+                for (chapter in result) {
+                    println("课程名称: ${chapter.course_name}")
+                    println("章节名称: ${chapter.name}")
+                    println("章节内容: ${chapter.content}")
+                    println("------------------------")
+                }
+            } else {
+                println("未查询到任何章节内容")
             }
-        } else {
-            println("未查询到任何章节内容")
-        }
-        chapters.clear()
-        delay(100L)
-        result.forEach {
-            chapters.add(it)
-        }
+            chapters.clear()
+            delay(100L)
+            result.forEach {
+                chapters.add(it)
+            }
+        } catch (_: Exception) { }
     }
     fun deleteChapter(chapterName: String) = scope.launch {
-        println("delete chapter $chapterName")
-        client.delete("/chapter/delete/$chapterName/$courseName")
+            println("delete chapter $chapterName")
+        try {
+            client.delete("/chapter/delete/$chapterName/$courseName")
+        } catch (_: Exception) { }
         delay(100L)
         search() // 删除后刷新列表
     }

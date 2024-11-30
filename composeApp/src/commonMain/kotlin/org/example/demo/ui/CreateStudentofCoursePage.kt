@@ -46,12 +46,17 @@ fun CreateStudentofCoursePage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/student/course/join") {
-                            contentType(ContentType.Application.Json)
-                            setBody(JoinCourseRequest(
-                                student = stu_name,
-                                course = course_id))
-                        }
+                        try {
+                            client.post("/student/course/join") {
+                                contentType(ContentType.Application.Json)
+                                setBody(
+                                    JoinCourseRequest(
+                                        student = stu_name,
+                                        course = course_id
+                                    )
+                                )
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

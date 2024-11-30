@@ -54,18 +54,20 @@ fun CreateKeypointPage(
                 Button(onClick = {
                     scope.launch {
                         //修改为课堂路径
-                        client.post("/keypoint/add") {
-                            contentType(ContentType.Application.Json)
-                            setBody(
-                                KeypointAddRequest(
-                                    course_name = course_name,
-                                    name = name,
-                                    keypoint_content = keypoint_content,
-                                    content = content,
-                                    keypoint_name= keypointname,
+                        try {
+                            client.post("/keypoint/add") {
+                                contentType(ContentType.Application.Json)
+                                setBody(
+                                    KeypointAddRequest(
+                                        course_name = course_name,
+                                        name = name,
+                                        keypoint_content = keypoint_content,
+                                        content = content,
+                                        keypoint_name = keypointname,
+                                    )
                                 )
-                            )
-                        }
+                            }
+                        } catch (_: Exception) { }
                         navController.popBackStack()
                     }
                 }) {

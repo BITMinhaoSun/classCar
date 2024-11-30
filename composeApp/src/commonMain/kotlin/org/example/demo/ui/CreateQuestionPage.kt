@@ -184,17 +184,19 @@ fun CreateQuestionPage(
                     Button(onClick = {
                         scope.launch {
                             if (answer in options) {
-                                client.post("/teacher/question/add/${lessonId}") {
-                                    contentType(ContentType.Application.Json)
-                                    setBody(
-                                        AddQuestionRequest(
-                                            description = description,
-                                            options = options,
-                                            answer = answer,
-                                            lessonId = lessonId
+                                try {
+                                    client.post("/teacher/question/add/${lessonId}") {
+                                        contentType(ContentType.Application.Json)
+                                        setBody(
+                                            AddQuestionRequest(
+                                                description = description,
+                                                options = options,
+                                                answer = answer,
+                                                lessonId = lessonId
+                                            )
                                         )
-                                    )
-                                }
+                                    }
+                                } catch (_: Exception) { }
                                 navController.popBackStack()
                             } else {
                                 snackbarHostState.showSnackbar("请选择题目答案")
